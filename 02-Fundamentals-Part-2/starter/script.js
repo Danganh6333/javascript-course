@@ -3,58 +3,61 @@
 ///////////////////////////////////////
 //Activating Strict Mode
 
-let hasDriversLicense = false;
-const passTest = true;
+ let hasDriversLicense = false;
+ const passTest = true;
 
-//ReferenceError: hasDriverLicense is not defined when using strict mode but nothing on loose mode
-//  if (passTest) hasDriverLicense = true;
-if (hasDriversLicense) console.log('I can drive :D');
+ //ReferenceError: hasDriverLicense is not defined when using strict mode but nothing on loose mode
+ //  if (passTest) hasDriverLicense = true;
+ if (hasDriversLicense) console.log('I can drive :D');
 
 ///////////////////////////////////////
 //Functions
 
-//Fuctions a piece of code that can be reuse over and over again in our code
+ //Fuctions a piece of code that can be reuse over and over again in our code
 
-//calling / running / invoking the function
-function logger() {
+ //calling / running / invoking the function
+ function logger() {
   console.log('My name is Jonas');//this fuction does not return a value 
-}
+ }
 
-logger()
-logger()
+ logger()
+ logger()
 
-function fruitProcessor(apples, oranges) {
+ function fruitProcessor(apples, oranges) {
   console.log(apples, oranges);//Using the parameter as a normal variables
   const juice = `Juice with ${apples} apples and ${oranges} oranges`
   return juice
-}
+ }
 
-const appleJuice = fruitProcessor(5, 0)//If we want to use the value that was returned we need to store it in a variable
-console.log(appleJuice);
+ const appleJuice = fruitProcessor(5, 0)//If we want to use the value that was returned we need to store it in a variable
+ console.log(appleJuice);
 
-console.log(fruitProcessor(5, 0));
+ console.log(fruitProcessor(5, 0));
 
-const appleOrangeJuice = fruitProcessor(2, 4) // Without the parenthesis, the function is really just a value
+ const appleOrangeJuice = fruitProcessor(2, 4) // Without the parenthesis, the function is really just a value
 
-console.log(appleOrangeJuice);
+ console.log(appleOrangeJuice);
 
-///////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 //Function Declarations vs. Expressions
-//Last lecture,we use funtion declarations because we simply use the fuction keyword to declare
+ /**
+  * Last lecture,we use funtion declarations because we simply use the fuction keyword to declare
+  * function functionName() {}
+  */
 
-const age1 = calcAge1(2002)
-console.log(age1);
+ const age1 = calcAge1(2002)
+ console.log(age1);
 
-function calcAge1(birthYear) {
+ function calcAge1(birthYear) {
   return 2037 - birthYear
-}
-//Anonymous function because we didn't give it a name,this is a function expression(a function value stored in a variable)
-const calcAge2 = function (birthyear) {
-  return 2037 - birthyear
-}
+ }
+ //Anonymous function because we didn't give it a name,this is a function expression(a function value stored in a variable)
+ const calcAge2 = function (birthyear) {
+   return 2037 - birthyear
+ }
 
-const age2 = calcAge2(1991)
-console.log(age1, age2);
+ const age2 = calcAge2(1991)
+ console.log(age1, age2);
 //Functions are just values but not a type
 
 //We can call the function declarations before they are defined in the code
@@ -62,44 +65,44 @@ console.log(age1, age2);
 ///////////////////////////////////////
 //Arrow Functions
 
-const calcAge3 = birthYeah => 2037 - birthYeah
-console.log(calcAge3(37));
+ const calcAge3 = birthYeah => 2037 - birthYeah
+ console.log(calcAge3(37));
 
-const yearUntilRetirement = (birthYear, firstName) => {
+ const yearUntilRetirement = (birthYear, firstName) => {
   const age = 2033 - birthYear
   const retirement = 68 - age
   return `${firstName} retires on ${retirement}`
-}
+ }
 
-console.log(yearUntilRetirement(200, 'Huy'));
+ console.log(yearUntilRetirement(200, 'Huy'));
 
 ///////////////////////////////////////
 //Functions Calling Other Functions
 
-function cutFruitPieces(fruit) {//DRY : Don't repeat yourself
+ function cutFruitPieces(fruit) {//DRY : Don't repeat yourself
   return fruit * 4
-}
+ }
 
 
-function fruitProcessor(apples, oranges) {
+ function fruitProcessor(apples, oranges) {
   const applePieces = cutFruitPieces(apples);
   const orangePieces = cutFruitPieces(oranges);
 
   const juice = `Juice with ${applePieces} piece of apple and ${orangePieces} pieces of orange.`;
   return juice;
-}
+ }
 
 console.log(fruitProcessor(2, 3));
 
-///////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 //Reviewing Functions
 
 //Two birthYear in these two function do not have anything to do with one another
 
-const calcAge4 = function (birthYear) {
+ const calcAge4 = function (birthYear) {
   return 2037 - birthYear
-}
-//Alt + Up : Move the line up
+ }
+ //Alt + Up : Move the line up
 const yearUntilRetirement2 = function (birthYear, firstName) {
   const age = calcAge4(birthYear)
   const retirement = 68 - age
@@ -112,7 +115,7 @@ const yearUntilRetirement2 = function (birthYear, firstName) {
 
 console.log(yearUntilRetirement2(1991, 'Jonas'));
 
-///////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 //Introduction to Arrays 
 const friends = ['Michael', 'Steven', 'Peter'] //literal syntax
 console.log(friends);
@@ -156,7 +159,7 @@ console.log(age3, age4, age5);
 
 const ages = [calcAge(years[0]), calcAge(years[1]), calcAge(years[years.length - 1])]
 
-///////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 //Basic Array Operations (Methods)
 
 const friends2 = ['Michael', 'Steven', 'Peter']
@@ -196,7 +199,7 @@ if (friends.includes('Steven')) {
 }
 //Ctrl + B open and closed the explorer
 
-///////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 //Introduction to Objects
 
 //In objects, we define key value pairs
@@ -230,7 +233,7 @@ const nameKey = 'Name'//Repeating part in the property name firstName and lastNa
 console.log(jonas2['first' + nameKey]);
 console.log(jonas2['last' + nameKey]);
 
-//When we need to first compute the property name like in the first and last Name, we use the bracket notation and in any othẻ situation just use the dot notation because it's cleaner and easier to use
+//When we need to first compute the property name like in the first and last Name, we use the bracket notation and in any other situation just use the dot notation because it's cleaner and easier to use
 
 const interestedIn = prompt('What do you want to know about Jonas? Choose between firstName, lastName, age, job, and friends');
 console.log(jonas2.interestedIn);//Undefined is what we get when we try to access a property that does not exist on an object.
@@ -255,7 +258,7 @@ Challenge : writing this sentence but without hard coding : "Jonas has 3 friends
 */
 console.log(jonas2[`first` + nameKey] + ' has ' + jonas2['friends'].length + ' friends, and his best friend is called ' + jonas2.friends[0]);
 
-///////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 //Object Methods
  const jonas3 = {
   firstName: 'Jonas',
@@ -298,17 +301,147 @@ console.log(jonas2[`first` + nameKey] + ' has ' + jonas2['friends'].length + ' f
 
  console.log(jonas3.getSumary());
 
-///////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 // Iteration: The for Loop
 
  /*
   The loop statement has three parts.
   The first part is the initial value of a counter
-  The second part, is a logical condition that is evaluated before each iteration of the loop.
+  The second part is a logical condition that is evaluated before each iteration of the loop.
+  The third part is increasing or decreasing the counter
  */
 
  // for loop keeps running while condition is TRUE
- for (let rep = 1; rep <= 10; index++) {
-  const element = array[index];
-  
+ for (let rep = 1; rep <= 10; rep++) {
+  console.log(`Lifting weights repetition ${rep} 🏋️‍♀️`);
  }
+
+ /**
+  * for (let rep = 1; rep = 10; rep++) {
+  *   console.log(`Lifting weights repetition ${rep} 🏋️‍♀️`);
+  * }
+  * The issue with your loop is due to the condition rep = 10. 
+  * This condition is an assignment, not a comparison, 
+  * which means that rep is always being set to 10 during each iteration. This results in an infinite loop because rep will always be equal to 10, so the condition never becomes false.
+  */
+
+///////////////////////////////////////////////////////////////////////////////////
+// Looping Arrays, Breaking and Continuing
+ const jonas4 = [
+   'Jonas',
+   'Schmedtmann',
+   2037 - 1991,
+   'teacher',
+   ['Michael', 'Peter', 'Steven'],
+   true
+ ];
+
+ //Printing out the jonas4 array
+ for (let i = 0; i < jonas4.length; i++) {
+  console.log(jonas4[i],typeof jonas4[i]);
+ }
+
+ //Ways to create a new array based on the values of one original array
+
+ const types = [];
+ //Filling types array
+ for (let i = 0; i < jonas4.length; i++) { 
+  console.log(jonas4[i],typeof jonas4[i]);
+  //First way 
+  // types[i] = typeof jonas4[i]
+
+  //Second way
+  // types.push(typeof jonas[i]);
+ }
+
+ console.log(types);
+
+ const years2 = [1991, 2007, 1969, 2020];
+ const ages1 = [];
+
+ for (let i = 0; i < years2.length; i++) {
+  ages1.push(2037 - years2[i])
+ }
+ console.log(ages1);
+
+ // continue and break
+
+ /**
+  * continue is to exit the current iteration of the loop and continue to the next one.
+  * break is used to completely terminate the whole loop.
+  */
+ console.log('--- ONLY STRINGS ---')
+ for (let i = 0; i < jonas4.length; i++) {
+  
+  if(typeof jonas4[i] !== 'string') continue //Only log strings to the console means that everything else should basically be skipped.
+  
+  console.log(jonas4[i], typeof jonas4[i]);
+ }
+
+ console.log('--- BREAK WITH NUMBER ---')
+ for (let i = 0; i < jonas.length; i++) {
+  if (typeof jonas[i] === 'number') break; //When a number is found,we want to break the loop.
+
+  console.log(jonas[i], typeof jonas[i]);
+ }
+
+///////////////////////////////////////////////////////////////////////////////////
+//  Looping Backwards and Loops in Loops
+ const jonas5 = [ 
+   'Jonas',
+   'Schmedtmann',
+   2037 - 1991,
+   'teacher',
+   ['Michael', 'Peter', 'Steven'],
+   true
+ ];
+
+ //Loop over jonas5 array backwards(last to first)
+ for (let i = jonas5.length - 1; i >= 0; i--) {
+  console.log(i,jonas5[i]);
+ }
+ 
+ //Create a loop inside of a loop
+ /**
+  * Challenge: 
+  * we have three different exercises and we want to repeat each of them five times.So that means a total of 15 repetitions so five for each of the three exercises.
+  */
+ for (let exercise = 1; exercise < 4; exercise++) {
+  console.log(`-------- Starting exercise ${exercise}`);
+
+  for (let rep = 1; rep < 6; rep++) {
+    console.log(`Exercise ${exercise}: Lifting weight repetition ${rep} 🏋️‍♀️`);
+  }
+ }
+
+///////////////////////////////////////////////////////////////////////////////////
+// The while Loop
+
+ for (let rep = 1; rep <= 10; rep++) {
+   console.log(`Lifting weights repetition ${rep} 🏋️‍♀️`);
+ }
+
+ //The while loop only need to specify a condition.
+ let rep = 1
+  while(rep > 10){
+    console.log(` Lifting weights repetition ${rep} 🏋️‍♀️`);
+    rep++
+ }
+
+ // The while loop is more versatile than the for loop because it does not really need a counter and only need the condition to stay true
+ /**
+ * Challenge: 
+ * Roll a dice and then keep rolling the dice until we roll a six and when we roll a six, we stop.
+ */
+
+ let dice = Math.trunc( Math.random() * 6) + 1
+ while(dice !== 6){
+  console.log(`You rolled a ${dice}`);
+  dice = Math.trunc( Math.random() * 6) + 1
+  if(dice === 6) console.log('Loop is about to end...');
+ }
+
+ /**
+  * Whenever you do need a loop without a counter,you can reach for the while loop.That happens whenever you do not know beforehand how 
+  * many iterations the loop will have.
+  */
