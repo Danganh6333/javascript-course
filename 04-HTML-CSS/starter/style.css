@@ -1,0 +1,64 @@
+*{ /*By default,some elements get some margin automatically.This can cause some problem so what we need to do is  reset all of the margins and all of the paddings
+    on all elements before doing anything else.  This is called a global reset.*/
+   /*The * selector will select all the element on the page*/
+   margin: 0;
+   box-sizing: border-box;
+   padding: 0; /*If we specify the width of an element to 100 pixels, and then add a padding of 20 pixels on each side, then 100 plus 20 plus 20 would be equal 140 pixels. So if all we wanted was a width of 100 pixels.
+   And so to fix this, we use box sizing set to border box. And so in this case, if we specify the width to 100 pixels, it will always be 100 pixels,*/
+}
+
+/* with the element selector, we can simply select all elements of a certain type. */
+body {
+    background-color: rgb(228, 228, 12);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    /* The font family property is a property that gets inherited.So all the Child Elements of the body element,will automatically get this font family assigned to them.*/
+    font-size: 20px;
+    padding: 75px;
+}
+
+h1 {
+    font-size: 35px;
+    margin-bottom: 25px;
+}
+
+h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.first { /*class selector is using the dot.*/
+    color: red;
+}
+
+p {
+    margin-bottom: 20px;
+}
+
+input,button { /*We want what we're gonna write here to apply to both the input and the button.*/
+    padding: 10px; /*input and button are inline elements.So they both don't create a box that occupies the whole line.*/
+    font-size: 16px;
+
+}
+
+#weird-image{
+ width: 300px;
+}
+
+a{
+    background-color: yellowgreen;
+}
+
+/*The example I have here is that we have these two h2 headings.But let's say I only wanted to select the h2 elements that are inside of the form element*/
+
+#your-name h2 {
+    color: brown;
+}
+
+#your-name{  /*id selector is using the #.*/
+    background-color: rgb(12, 228, 62);
+    border: 5px solid rgba(31, 42, 31, 0.6); /**This border is a shorthand property, because it allows us to specify multiple values here like this.*/
+    width :400px;
+    padding: 25px;
+    margin-top: 50px;
+}
+

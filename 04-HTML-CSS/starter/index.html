@@ -1,0 +1,48 @@
+ <!-- The main element in all HTML documents is always the HTML element.  -->
+<html>
+ <!-- Then inside the HTML element we always have to head and the body. So let's write that head and body. -->
+ <head>
+    <!--whatever we put into this head here is basically like the settings of the page. So it's like describing the page.-->
+    <title>Learning HTML & CSS</title> <!--title of the page-->
+    <!-- We can write CSS right here in the HTML file using the style element. -->
+    <!--Usually we write or CSS in an external CSS file.-->
+    <link rel="stylesheet" href="style.css"> <!-- link does not create a clickable link -->
+</head>
+ <body>
+    <!-- Whatever we put into the body is what's actually gonna be visible on the page -->
+     <h1>
+        JavaScript is fun, but so is HTML and CSS
+     </h1>
+    <!--We use classes and ids to essentially name elements so that we can then select them in CSS in order to style them and also to select elements from JavaScript when we do DOM manipulation.-->
+     <p class="first">You can learn JavaScript without HTML and CSS, but for DOM manipulation
+        it's useful to have some basic ideas of HTML and CSS.
+        <!-- a tag:  anchor element -->
+        We can include this link here in a sentence<a href="https://x.com/home"> Joined X</a>. <!--this link is right in line with the previous text that's why we call the anchor element an inline element.-->
+    </p>
+        <h2>
+            Another heading <!--this h2 element here is a block element because this heading is not in line with the text of the previous element.-->
+        </h2>
+     <p class="second">
+        Just another paragraph 
+     </p>
+
+     <img id="weird-image" src="https://i.pinimg.com/originals/4b/0c/19/4b0c19a617af335d1ac01b5aa6201c94.png"> <!--Image doesn't have a closing tag because we don't really put any written content like text in here.-->
+     
+     <!-- Input asking for the user's name -->
+     <form id="your-name"> <!--The form element better describes the content that is inside of the box than just the generic box that is the div -->
+        <!-- In the id name but also for class names in CSS, we use the dash(-) to separate two different words. -->
+         <h2>Tên của bạn</h2>
+         <p class="first">Xin mời nhập vào ô </p>
+         <input type="text" placeholder="Your name"> <!--We use the type attribute to specify the type of data that should be inputted into this element-->
+         <button>OK!</button>
+     </form>
+     <!-- The difference between classes and ids is that ids have to be unique -->
+     
+     <!-- ! + tab : Create a bare boned structure -->
+     <!-- !DOCTYPE, which essentially identifies this document as being HTML five. -->
+     <!-- We also get this language here on HTML.It's telling the browser that we're using the English language. -->
+     <!-- Attributes are what describe elements. -->
+
+     <!-- according to the box model, each and every element on a webpage can be seen as a rectangular box and each box can have a width, a height, padding, margins and a border. -->
+ </body>
+</html>

@@ -106,6 +106,190 @@
   * 4 steps framework to solve any problem
   * Step 1 : Make sure that you 100% understand the problem .Step back and take a high-level look at the big picture,and the most important part of the step
   is to ask the right questions in order to get a clear picture of the whole problem.
-  * Step 2 : 
+  * Step 2 : Divide and conquer strategy. Divide and conquer means to break up the big problem into as many small problems as possible because these small problems are then a lot easier to solve.
+  * Step 3 : Don't be afraid to do as much research as you have to
+  * Step 4 : For bigger problems, write pseudo-code before writing the actual code
   */
 
+  //Pseudo-code is simply an informal description of the actual code that we're gonna write.So it's like code for humans to understand not computers.
+
+  /**
+   * Example for step 1 : We need a function that reverses,"whatever we pass into it."
+   * 
+   * First we can ask,what does whatever actually mean in this context?
+   * So, what should actually be reversed here?it only makes sense to reverse strings,numbers, and arrays.
+   * Objects don't have a well-defined order,so we can't reverse them.We're also not gonna reverse like undefined,or null or a Boolean
+   * Then we can ask, what should we do if something else is passed in that is no string, number, or array? How are we gonna handle that?
+   * what exactly should be returned from the function? should it always be a string,also we can start to ask more solution oriented questions,
+   * like how to recognize whether the argument is a number,a string, or an array? Or how to actually it reverse a number,a string and an array.
+   * I'm sure there are more,but this should already give us a way more clear picture of this problem.
+   */
+ 
+    /**
+   * Example for step 2 : We need a function that reverses,"whatever we pass into it."
+   * 
+   * First, we need to check if the argument is a number, a string, or an array.And this is in fact, a small 
+   * sub problem, right? So now, and just solve this one in isolation and then move on.The next sub problem is
+   * to implement reversing a number, then implement reversing a string, and then implement reversing an array,
+   * so that we are ready to deal whatever is passed into the function.Finally, we then also need of course to 
+   * return the reversed value.So these are our sub problems, and they kind of look like a task list that we now
+   * need to go ahead and implement.Finally, we then also need of course to return the reversed value. 
+   * And this is great because it makes our work so much easier now.
+   */
+
+///////////////////////////////////////////////////////////////////////////////////
+// Using Google, StackOverflow and MDN
+
+// PROBLEM 1:
+ /**
+  * We work for a company building a smart home thermometer.
+  * Our most recent task is this: "Given an array of temperatures of one day, calculate the temperature amplitude.
+  * Keep in mind that sometimes there might be a sensor error."
+  */ 
+ const temperatures = [3, -2, -6, -1, 'error', 9, 13, 17, 15, 14, 9, 5];
+
+ // 1) Understanding the problem
+ // - What is temp amplitude? Answer: difference between highest and lowest temp
+ // - How to compute max and min temperatures? Answer: 
+ // - What's a sensor error? And what do do?
+
+ // 2) Breaking up into sub-problems
+ // - How to ignore errors?
+ // - Find max value in temp array
+ // - Find min value in temp array
+ // - Subtract min from max (amplitude) and return it
+
+ /**
+  * Use Google to research how we can find a maximum value in an array. And so that's what I meant when I said we should do some research and use Google whenever we need to.
+  * So what I like to do is to just write JavaScript and then be as descriptive as possible of what I want to achieve.
+  * So let's say get max value in array
+  * 
+  */
+
+ const calcTempAmplitude = function(temps){
+   let max = temps[0] //Create the max variable and assuming that the first element of the array is the maximum.
+   let min = temps[0]
+   for (let i = 0; i < temps.length; i++) {
+      const curTemp = temps[i]
+
+      if(typeof curTemp !== 'number') continue //this here should only run if we actually have a number here.
+
+      if(curTemp > max) max = curTemp //if the current value of the array, so that's temps at position i, the current position is greater than the current maximum value.Then the maximum value will become this new value.
+      if(curTemp < min) min = curTemp //if the current temperature is less than the minimum, then that should become the new minimum.
+   }
+   console.log(max,min);
+   return max - min //return the amplitude
+ }
+ const amplitude = calcTempAmplitude(temperatures)
+ console.log(amplitude);
+
+ // PROBLEM 2:
+ // Function should now receive 2 arrays of temps like calcTempAmplitude([array1],[array2])
+
+ // 1) Understanding the problem
+ // - With 2 arrays, should we implement functionality twice? NO! Just merge two arrays
+
+ // 2) Breaking up into sub-problems
+ // - Merge 2 arrays
+ const calcTempAmplitudeNew = function(arr1,arr2){
+
+   const temps = arr1.concat(arr2)
+   console.log(temps);
+
+   let max = temps[0] //Create the max variable and assuming that the first element of the array is the maximum.
+   let min = temps[0]
+   for (let i = 0; i < temps.length; i++) {
+      const curTemp = temps[i]
+
+      if(typeof curTemp !== 'number') continue //this here should only run if we actually have a number here.
+
+      if(curTemp > max) max = curTemp //if the current value of the array, so that's temps at position i, the current position is greater than the current maximum value.Then the maximum value will become this new value.
+      if(curTemp < min) min = curTemp //if the current temperature is less than the minimum, then that should become the new minimum.
+   }
+   console.log(max,min);
+   return max - min //return the amplitude
+ }
+ const amplitudeNew = calcTempAmplitudeNew([2,3,5],[2,5,1])
+ console.log(amplitude);
+
+///////////////////////////////////////////////////////////////////////////////////
+// Debugging (Fixing Errors) 
+
+ /**
+  * Software bug: Defect or problem in a computer program.
+  * Basically, any unexpected or unintended behavior of a
+  * computer program is a software bug.
+  */
+
+ // Debugging: Process of finding, fixing and preventing bugs.
+
+ /**
+  * The debugging process
+  * The first step is to actually become aware that there is some kind of bug.
+  * Once we know there is a bug, we need to go into our code and find the bug.Developer console is for simple code and Debugger is for complex code
+  * Once we know where the bug is located, we can finally fix it so we can correct the bug.
+  * As a final step, we should then prevent this bug from ever happening again in our code base.For example, we can search our project for the same bug in similar code, like in a similar function.A more advanced way of preventing bugs is to write tests using testing software.
+  */
+
+///////////////////////////////////////////////////////////////////////////////////
+// Debugging with the Console and Breakpoints
+
+ /**
+  * we need to do some measurements in a unit called Kelvin,which is the absolute temperature. And a conversion to Kelvin is to add 273 to the temperature in degrees Celsius.
+  */
+
+
+ const measureKelvin = function(){
+   const measurement = {
+      type: 'temp', //Add some arbitrary properties
+      unit: 'celsius', //We will measure temperature in Celsius, and then we return a converted version.
+      //3.FIX
+      value : 10 //Number( prompt('Degree celcius')) //The prompt always returns a string so the value is stri\ng
+    };
+
+    console.log(measurement);
+    // console.table(measurement);
+
+    console.log(measurement.value);//2.Find the bug
+    // console.warn(measurement.value);
+    // console.error(measurement.value);
+    
+
+    const kelvin = measurement.value + 273 //Convert to kelvin
+    return kelvin
+ }
+ //1.Identify the bug
+ console.log(measureKelvin());
+
+ /**
+  * How to use the debugger
+  * Go to sources then click on script.js, which is our current script. And we set a breakpoint by clicking in this left bar,
+  * and so this will set this red point, which means that there is a breakpoint.After that when we reload the page, the execution will stop 
+  * exactly at this point and show us exactly what the execution looks like, at that moment in time, and that includes all the values,
+  * of all the defined variables. 
+  * 
+  * To resume the script execution but it can only continue if you input a value, we click the right arrow at the right panel 
+  */
+ // Using a debugger
+ const calcTempAmplitudeBug = function(arr1,arr2){
+
+  const temps = arr1.concat(arr2)
+  console.log(temps);
+
+  let max = 0 
+  let min = 0
+
+  for (let i = 0; i < temps.length; i++) {
+     const curTemp = temps[i]
+
+     if(typeof curTemp !== 'number') continue
+
+     if(curTemp > max) max = curTemp 
+     if(curTemp < min) min = curTemp
+  }
+  console.log(max,min);
+  return max - min 
+}
+const amplitudeBug = calcTempAmplitudeBug([3,5,1],[9,4,5])
+//Identify 
+console.log(amplitude);
