@@ -40,7 +40,7 @@
  const openModal = function(){
         console.log('Button Clicked');
         //we can basically aggregate all of this properties in one class, that we identify here in CSS, and then in JavaScript we simply add and remove these classes as we need or don't need these styles.
-        //We can set the display : hidden in the hidden class, we can use Js to remove the class if we want to change
+        //We can set the display : hidden in the hidden class, and then we can use Js to remove the class if we want to change
         modal.classList.remove('hidden') //We take that selected element modal and on there we can read the class list property that has a couple of methods.
         //The dot(.hidden) is only for the selector. But here we are not anymore selecting anything. We're just passing in the name of the class.
         overlay.classList.remove('hidden')
