@@ -239,4 +239,257 @@
    * Starting in ES6, blocks creates scopes. And with blocks, we mean everything that is between curly braces, such as the block of an if statement or a for loop. So just like with functions, variables declared inside a block are only accessible 
    * inside that block and not outside of it.Now, the big difference is that block scopes only apply to variables declared with let or const. So if I declared a variable using var in this block,then that variable would actually still be accessible
    * outside of the block,and would be scoped to the current function or to the global scope.
+   * 
+   * Finally, also starting in ES6, all functions are now also block scoped, at least in strict mode
    */
+
+   /**
+    * If one scope needs to use a certain variable, but cannot find it in the current scope,
+    * it will look up in the scope chain and see if it can find a variable 
+    * in one of the parent scopes. If it can, it will then use that variable. 
+    * And if it can't, then there will be an error. And this process is called variable lookup.
+    * This does not work the other way around.So one scope can only look up in a scope chain, 
+    * but it cannot look down basically
+    * 
+    * So again, for a variable declared with var, block scopes don't apply at all. 
+    * They are functions scoped, not block scoped so it will look up for the nearest function.Also the scope chain apply to block scopes as well.
+    * And therefore in or if block scope, we get access to all the variables from all its outer scopes.
+    */
+
+    /**
+     * the scope chain only works upwards, not sideways by the rule of lexical scoping
+     */
+
+///////////////////////////////////////////////////////////////////////////////////
+//Scoping in Practice
+
+  function calcAge(birthYear){
+    const age = 2037 - birthYear
+    
+    console.log(firstName); //Now as you see, this first name variable is not actually in this scope of the calcAge function. However, it is a global variable that we defined out here. And so therefore, through the scope chain, it's gonna be made available also inside of this scope.
+    
+    function printAge(){
+      let output = `${firstName} ,You are ${age}, born in ${birthYear}`
+      console.log(output);
+
+      if(birthYear >= 1991 && birthYear <= 1996){
+        var millenial = true
+        const firstName = 'Steven'//JavaScript tries to look for the variable name in the current scope.And right now, it actually is in the current scope.So first name is indeed, in this same block.And so therefore, JavaScript will then use that variable and not perform any variable look up in the scope chain.
+        const str = `Oh, and you're a millenial, ${firstName}`
+        console.log(str);
+        
+        function add(a,b){
+          return a + b
+        }
+        add(2,3)
+        output = 'NEW OUTPUT'//We manipulated an existing variable here, inside of a child scope.So if we did create a new variable called output here, then we would have the same situation as before with first name.
+      }
+      console.log(output);
+      
+      console.log(millenial);//The scope of millenial is the entire printAge function
+      // console.log(str);
+      // console.log(add(2,3)) //If you turn off the strict mode this can be use   
+    }
+    printAge()
+    return age
+  }
+
+  const firstName = 'Jonas'//The code in the function is only executed once it's actually called. And so that happens after the declaration of the first name variable.And so at this point in the code, the first name variable is already in the global execution variable environment.
+  calcAge(1991) 
+
+  //In the global scope, we do not have access to any variables defined in any other scope
+  //console.log(age);
+  //printAge()
+  
+///////////////////////////////////////////////////////////////////////////////////
+//Variable Environment: Hoisting and The TDZ
+
+ /*
+  * hoisting make some types of variables accessible, or let's say usable in the code before they are actually declared in the code.
+  * And that is actually what hoisting looks like on the surface.But behind the scenes
+  * that's in fact not what happens. Instead, behind the scenes the code is basically scanned for variable declarations before it is executed.
+  * So this happens during the so-called creation phase of the execution context.
+  * Then for each variable that is found in the code,a new property is created in a variable environment object.
+  * */
+  
+ /**
+  * hoisting does not work the same for all variable types
+  *         Hoisting in Javascript
+  * *---------------------------------------------------------------------------------------------------------
+  *  |                                           | HOISTED   | INITIAL VALUE         | SCOPE
+  *  ---------------------------------------------------------------------------------------------------------
+  *  | function declarations                     | YES       | Actual function       | Block
+  *  ---------------------------------------------------------------------------------------------------------
+  *  | var variables                             | YES       | undefined             | Function
+  *  ---------------------------------------------------------------------------------------------------------
+  *  | let or const variables                    | NO        | <uninitialized> TDZ   | Block
+  *  ---------------------------------------------------------------------------------------------------------
+  *  | function expressions and arrow functions  | depends if they were created using var or const or let.
+  *  ---------------------------------------------------------------------------------------------------------
+  * 
+  * Actual declaration : We can use function declarations before they are actually declared in the code because they are stored in the variable environment object,
+  * even before the code starts executing
+  * 
+  * Block scope is only true for strict mode in function declarations 
+  * 
+  * When we try to access a var variable before it's declared in a code, we don't get the declared value but we get undefined.
+  * 
+  * let or const variables are actually hoisted but their value is basically set to an initialized. So there is no value to work with at all.
+  * And so in practice, it is as if hoisting was not happening at all.
+  * Instead, we say that these variables are placed in a so-called Temporal Dead Zone or TDZ which makes it so that we can't access the variables between the beginning of the scope 
+  * and the place where the variables are declared.So as a consequence,if we attempt to use a let or const variable
+  * before it's declared, we get an error.
+  * 
+  * 
+  * A function expression or arrow function created with var is hoisted to undefined.
+  * But if created with let or const, it's not usable before it's declared in a code because of the Temporal Dead Zone.
+  * So just like normal variables
+  * 
+  * 
+  * The main reason that the TDZ was introduced in ES6 is that the behavior I described before makes it way easier to avoid and catch errors. Because using a variable that is set to undefined
+  * before it's actually declared can cause serious bugs which might be hard to find.
+  * 
+  * A second and smaller reason why the TDZ exists is to make const variables actually work the way they are supposed to.
+  * So as you know, we can't reassign const variables.So it will not be possible to set them to undefined first and then assign their real value later.
+  * Const should never be reassigned.And so it's only assigned when execution
+  * actually reaches the declaration.And that makes it impossible to use the variable before.
+  */
+
+///////////////////////////////////////////////////////////////////////////////////
+//Hoisting and TDZ in Practice
+
+ //console.log(me);//the first log result in undefined, and that's because variables declared with var are actually hoisted, but they are hoisted to the value of undefined.
+ //console.log(job); //Then on the contrary we have this let variable, and so here we see that we cannot access job before initialization.the job variable is still in the temporal dead zone here at this point.
+ //console.log(year);//we get the same error here for the year variable as job
+
+ var me = 'Jonas'
+ let job = 'teacher'
+ const year = 1991
+ 
+//  function hello(){
+//   console.log(job);
+  
+//  }
+//  hello() //This works
+
+
+  console.log(addDecl(2,3));
+  // console.log(addExpr(2,3));
+  // console.log(addArrow(2,3));
+
+  
+
+ //Functions hoisting
+ function addDecl(a,b){//we were able to call the function declaration before it was actually defined here in the code.
+  return a + b
+ }
+
+ const addExpr = function(a,b){ //this function here right now is simply a const variable too. And so it means that it's now also in the temporal dead zone
+  return a + b
+ }
+
+ var addArrow = (a,b) => a + b //Any variables declared with var will be hoisted and set to undefined.And now this addArrow here is essentially that, it's a variable declared with var and so right now it is undefined.
+ 
+ console.log(numProduct);//this return undefined so don't use var to declare varriable.Use const most of the time to declare variables and let, if you really need to change the variable later.  Also in order to write clean code,you should declare your variables at the top of each scope.
+ 
+ if(!numProduct) deleteShoppingCart() //when there is no products, we want to delete the shopping cart.
+
+ var numProduct = 10
+
+ function deleteShoppingCart(){
+  console.log('All products delete');
+  
+ }
+
+ var x = 1
+ let y = 2
+ const z = 3
+
+ /**
+  * Window is the global object of JavaScript in the browser.And as we type window in the browser console we can see
+  * all these functions and we also get a property of x equals one.
+  * And that's exactly the variable that we declared right here using the var keyword.
+  * However, we cannot find y or z here anywhere in this object.
+  * And that's because they were declared with let or const.
+  * And so variables declared that way do not create properties on the window object.
+  * */
+
+ console.log(x === window.x);
+ console.log(y === window.y);
+ console.log(z === window.z);
+
+///////////////////////////////////////////////////////////////////////////////////
+//The this Keyword
+ 
+ //This keyword or this variable is basically a special variable that is created for every execution context and therefore any function.t's one of the three components of any execution context,along with the variable environment and scope chain
+ 
+ //the this keyword, will always take the value of the owner of the function in which, the this keyword is used.
+
+ /**
+  * this is NOT static. It depends on how the function is called, and its value is only assigned when the function is actually called
+  * 
+  * Method 👉 this = <Object that is calling the method>
+  * 
+  * Simple function call 👉 this = undefined //However, that is only valid for strict mode. So if you're not in strict mode, this will actually point to the global object,
+  * which in case of the browser is the window object.
+  * 
+  * Arrow functions 👉 this = <this of surrounding function (lexical this)> // arrow functions do not get their own 'this keyword'. Instead, if you use 'the this variable' in an arrow function, it will simply be the this keyword of the surrounding function.
+  * 
+  * Event listener 👉 this = <DOM element that the handler is attached to> //he this keyword will always point to the DOM element that the handler function is attached to.  
+  * 
+  * this does NOT point to the function itself, and also NOT the its variable environment
+  * */
+
+///////////////////////////////////////////////////////////////////////////////////
+//The this Keyword in Practice
+ 
+ console.log(this);//the this keyword in the global scope is simply the window object.
+
+ const calcAge1 = function(birthYear){ //Inside of just a regular function call,the disc keyword is undefined.
+  console.log(2037 - birthYear);
+  console.log(this);
+ }
+
+ calcAge1(1991)
+
+ const calcAgeArrow = (birthYear) =>{ 
+  console.log(2037 - birthYear);
+  console.log(this);//It is window
+ }
+
+ calcAgeArrow(1991) 
+
+ const jonas = {
+  year : 1991,
+  calcAge : function (){
+    console.log(this); //when we  use the this keyword inside of a method call,the this keyword insight of the method will be the object that is calling the method.And in this case, that's the Jonas object.
+    console.log(2037 - this.year);
+  }
+ }
+ jonas.calcAge() //So here we wrote the calcAge method inside of the Jonas object.And so we might think that is the reason why the this keyword points to jonas.But that is not true, reason that the this keyword will point to Jonas in this case is because Jonah's was the object calling this keyword
+ 
+ const matilda = {
+  year : 2017
+ }
+
+ matilda.calcAge = jonas.calcAge //The calcAge is in Jonas but now we copied it from one object to the other, and this is called to method borrowing. So we basically borrowed here the method from one object to the other.
+ matilda.calcAge() //the this keyword always points to the object that is calling the method. And so here we are calling the method on Matilda
+
+ //taking the function out of the Jonas object.
+ const f = jonas.calcAge
+ //f()//The this keyword is now undefine So this happens because this function here is now just a regular function call. It is not attached to any object.There is no owner of this F function anymore here at this point.
+
+///////////////////////////////////////////////////////////////////////////////////
+//Regular Functions vs. Arrow Functions
+
+ const jonas1 = { //This is not a code block. It is an object literal.So it's just a way that we literally define objects
+  firstName : 'Jonas',
+  year : 1991,
+  calcAge : function (){
+    console.log(this); 
+    console.log(2037 - this.year);
+  },
+  greet : () => console.log(`Hey ${this.firstName}`) //an arrow function does not get its own this keyword.it will simply use the this keyword from its surroundings. So in other words, its parents this keyword, and the parent scope of this greet method is the global scope
+ }
+
+ jonas.greet()
