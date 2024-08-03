@@ -476,20 +476,249 @@
  matilda.calcAge() //the this keyword always points to the object that is calling the method. And so here we are calling the method on Matilda
 
  //taking the function out of the Jonas object.
+
  const f = jonas.calcAge
  //f()//The this keyword is now undefine So this happens because this function here is now just a regular function call. It is not attached to any object.There is no owner of this F function anymore here at this point.
 
 ///////////////////////////////////////////////////////////////////////////////////
 //Regular Functions vs. Arrow Functions
 
+ 
+
  const jonas1 = { //This is not a code block. It is an object literal.So it's just a way that we literally define objects
   firstName : 'Jonas',
   year : 1991,
-  calcAge : function (){
-    console.log(this); 
+
+  //Solution 02
+  calcAge : function (){ //this worked because this arrow function uses the this keyword from its parent scope
     console.log(2037 - this.year);
+    const isMillenial = () => {
+      console.log(this);
+      console.log(this.year >= 1981 && this.year <= 1996);
+    }
+    isMillenial()
+
+
+    //Solution 01
+    // const self = this //here we are still outside of this isMillennial function.And so here, we still have access to this keyword set to Jonas so we defined self as this
+    // const isMillenial = function(){//This is just a regular function call even though it happens inside a method And the rule says that inside a regular function call, that this keyword must be undefined
+    //   console.log(self);
+    //   console.log(self.year >= 1981 && self.year <= 1996);
+    //   // console.log(this);//This will log out as undefined
+    //   // console.log(this.year >= 1981 && this.year <= 1996);
+    // }
+    // isMillenial()
+  
   },
-  greet : () => console.log(`Hey ${this.firstName}`) //an arrow function does not get its own this keyword.it will simply use the this keyword from its surroundings. So in other words, its parents this keyword, and the parent scope of this greet method is the global scope
+
+  greet : () => console.log(`Hey ${this.firstName1}`) //an arrow function does not get its own this keyword.it will simply use the this keyword from its surroundings. So in other words, its parents this keyword, and the parent scope of this greet method is the global scope
+ }
+ var firstName1 = 'Matilda'//This is in a gloabal scope
+
+ jonas1.greet() // Because we declare firstName1 with var then this will log out Hey Matilda
+ jonas1.calcAge()
+ 
+ //Just like the this keyword, the arguments keyword is only available in regular functions.
+
+ const addExpr1 = function(a,b){ 
+  console.log(arguments);
+  
+  return a + b
  }
 
- jonas.greet()
+ addExpr1(2,4)//up until this point, we have only ever specified exactly the arguments that we have here in the list of parameters.But it is completely legal to add more arguments.They will not have a name, so we didn't name them, but they exist.
+
+ var addArrow1 = (a,b) => {
+  // console.log(arguments);//arguments keyword exists, but that it only exists in regular functions.So in function expressions like this and also in function declarations,but not in an arrow function.
+    a + b
+ }
+
+///////////////////////////////////////////////////////////////////////////////////
+// Primitives vs. Objects (Primitive vs. Reference Types)
+
+ let age = 30 
+ let oldAge = age
+ age = 31 //Changed the original one from 30 to 31.
+ console.log(age);
+ console.log(oldAge);//But the old age is still 30 here.And that's because I set the code to age at the point in which was still 30 .And so then changing the age here from 30 to 31 did of course not affect the old age variable again.
+
+ const me1 = {
+  name : 'Jonas',
+  age : 30
+ }
+
+ //Both me and friend have the age of 27 And that looks a little bit strange because all we did was to change the age of the friend
+ const friend = me1
+ friend.age = 27
+ console.log('Friend',friend);
+ console.log('Me',me1);
+ 
+ /**
+  * Now, when we're talking about memory and memory management, it's usual to call primitives, primitive types and objects reference types because of the different way in which they are stored in memory.
+  * Reference types(objects) will get stored right in the memory heap.
+  * On the other hand, primitives or primitive types are stored in the call stack so they are stored in the execution contexts in which they are declared.
+  * */
+ 
+ /**
+  * Primitive values example 
+  * 
+  * let age = 30 
+  * let oldAge = age
+  * age = 31 
+  * console.log(age);
+  * console.log(oldAge);
+  * 
+  * So when we declare a variable like age equals 30, JavaScript will create 
+  * a so-called unique identifier with the variable name. Then a piece of memory will be allocated
+  * with a certain address, so 0001 in this example, and finally the value would be stored in memory
+  * at the specified address.And remember this all happens in a call stack
+  * where primitive values are stored.Now what's extremely important to understand here
+  * is that the identifier actually points to the address and not to the value itself.
+  * 
+  * So we would say that the age variable is equal to 30,but in fact, age is equal to the memory address 0001,which holds the value of 30
+  * Now, in the next line, we declare old age to be equal to age.And it will point the oldAge to the same memory address
+  * as the age variable.
+  * 
+  * In the next line, we set age to 31.The value at address 0001 will certainly not become 31 because that would change old age as well,
+  * since they both point to the same address.Also the value at a certain memory address is immutable,
+  * or in other words, it cannot be changed.So instead what's going to happen here
+  * is that a new piece of memory is allocated.So the age identifier now simply points
+  * to the new address, which is holding the new value of 31
+  * 
+  * And that's why when we log both of variables to the console in the end,they both return exactly values that we expect.
+  */
+
+ /**
+  * Reference values example 
+  * const me1 = {
+  * name : 'Jonas',
+  * age : 30
+  * }
+  * 
+  * const friend = me1 
+  * friend.age = 27 //Even though we defined the 'friend' variable as a constant, we can actually still manipulate the object without problems.
+  * //Because we're actually not changing the value in memory for the Friend identifier, it is still D30F. 
+  * So the reference to the object. All we did was to change the value in the heap, and that's not a problem.
+  * 
+  * console.log('Friend',friend);
+  * console.log('Me',me1)
+  * 
+  * 
+  * 
+  * When a new object is created such as this 'me1' object,it is stored in the heap
+  * And like Primitive values example there is a memory address and then the value itself.
+  * In the case of reference values like this 'me1' object, the 'me1' identifier
+  * does actually not point directly to this newly created memory address in the heap.
+  * So in this example, D30F,instead, it will point to a new piece of memory
+  * that's created in the stack.
+  * 
+  * And this new piece of memory will then point to the object
+  * that's in the heap by using the memory address as its value.
+  * In other words, the piece of memory in the call stack
+  * has a reference to the piece of memory in the heap,
+  * which holds or 'me1' object, okay?
+  * 
+  * And that's the reason why we call objects reference types
+  * 
+  * So again, when we declare a variable as an object,an identifier is created,
+  * which points to a piece of memory in the stack,which in turn points to a piece of memory in the heap.
+  * And that is where the object is actually stored.
+  * And it works this way because objects might be
+  * too large to be stored in the stack.
+  * Instead they are stored in the heap,
+  * which is like an almost unlimited memory pool.
+  * And the stack just keeps a reference
+  * to where the object is actually stored in the heap
+  * so that it can find it whenever necessary.
+  * 
+  * Now, moving on in the code, we create a new variable called 'friend'
+  * that we set equal to the 'me' object.And just like with primitive values,
+  * the 'friend' identifier will point to the exact same memory address as the 'me' identifier.
+  * And again, that address contains the reference,which then points to the object itself.
+  * And like this the Friend object is now essentially the exact same as the 'me' object.
+  * Now we're actually gonna change a property in the Friend object by setting friend.age to 27
+  * So what happens then is that the object is found in the heap, and the 30 is changed to 27.
+  * 
+  * In the slide is the fact that 'me1' and 'friend' actually point to the exact same object in the memory heap. 
+  * So whenever we change something in this object, it will always be reflected in 'friend' and in 'me1'.
+  * So in both these objects.So these are basically just two different identifiers
+  * pointing to the exact same value.So whenever you think that you're copying an object,
+  * you're really just creating a new variable that points to the exact same object
+  */
+
+///////////////////////////////////////////////////////////////////////////////////
+//  Primitives vs. Objects in Practice
+ let lastName = 'Williams'
+ let oldLastName = lastName
+ lastName = 'Davis'
+ console.log(lastName,oldLastName);
+
+ //As we already know is a reference value because it is gonna be stored in the heap, and the stack then just keeps a reference to the memory position at which the object is stored in the heap.
+
+ const  jessica = {
+  firstName : 'Jessica',
+  lastName : 'William',
+  age : 27
+ }
+
+ const marriedJessica = jessica
+ marriedJessica.lastName = 'Davis'
+
+ console.log('Before Marriage',jessica);
+ console.log('After Marriage',marriedJessica);
+ /**
+  * When we attempted to copy the original Jessica object,it did in fact not create a new object in the heap.
+  * So it is not a new object in the heap.It's simply just another variable in the stack,
+  * which holds the reference to the original object.So, both of these two variables simply point
+  * to exactly the same memory address in the heap.And that's because in the stack,they both hold the same memory address reference.
+  * And so of course, it makes sense that if we change a property on marriedJessica,
+  * it will also change on Jessica itself.So, again, because they are essentially just two different names for the same thing.
+  * Now, this is also the reason why we can change properties in the marriedJessica object,which was declared using a const here.
+  * And const is supposed to be for constants.So, for things that we cannot change.However, what actually needs to be constant 
+  * is the value in the stack.And in the stack, the value only holds the reference,
+  * which we are not actually changing.The only thing that we are changing is the underlying object
+  * that is stored in the heap.
+  */
+
+  /**
+   * marriedJessica = {}
+   * We could not say marriedJessica is equal to this new empty object. 
+   * Because this new object will be stored at a different position in memory, and therefore 
+   * the reference to that position in memory will have to change here in this variable.Because that is in the stack
+   * since it is a constant,we cannot change that value in the stack.So, we cannot change the value to a new memory address,
+   * and therefore, this does not work.If it was a let here,then we could do this, what we have here.
+   * But since it's a constant, again, it is not allowed.So, as a conclusion, completely changing the object,so, assigning a new object to it
+   * is completely different than simply changing a property as we did
+   * */ 
+ 
+  //Copy the object so that we could then change one of them without changing the othe
+
+   const jessica1 = {
+    firstName : 'Jessica',
+    lastName : 'William',
+    age : 27,
+    family : ['Alice','Bob'] //Add an Array Object
+   }
+  //If we really wanted to copy this object, we could use a function called object.assign. And what this function does is to merge two objects and then return a new one.
+
+  const jessicaCopy = Object.assign({},jessica1) //By merging with an empty new object,  this will then create a completely new object where all the properties are really copied
+
+  jessicaCopy.lastName = 'Davis'
+
+ console.log('Before Marriage',jessica1);
+ console.log('After Marriage',jessicaCopy);
+
+ jessicaCopy.family.push('Mary')
+ jessicaCopy.family.push('John')
+
+ console.log('Before Marriage',jessica1);
+ console.log('After Marriage',jessicaCopy);
+
+ /**
+  * Because using this technique of object.assign only works on the first level.
+  * Or in other words, if we have an object inside the object, then this inner object will actually still be the same.
+  * So, it will still point to the same place in memory.And that's why we say that this object.assign
+  * only creates a shallow copy and not a deep clone which is what we would like to have.
+  */
+ 
+ 
