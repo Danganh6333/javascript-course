@@ -81,185 +81,104 @@
  //JavaScript engine is simply a computer program that executes JavaScript code.The most well known engine is Google's V-Eight
 
  /**
-  * Any JavaScript engine always contains a call stack and a heap.
-  * The call stack is where our code is actually executed using something called execution contexts.
-  * Then the heap is an unstructured memory pool which stores all the objects that our application needs.
-  */
+  *
+  * ### Summary: The JavaScript Engine and Runtime
 
- /**
-  * The difference between compilation and interpretation
-  * 
-  * In compilation, the entire source code is converted into machine code at once.
-  * And this machine code is then written into a portable file that can be executed on any computer.
-  * So first, the machine code is built and then it is executed in the CPU so in the processor.And the execution can happen way after the compilation of course.
-  * For example, any application that you're using on your computer right now has been compiled before
-  * and you're now executing it way after it's compilation.
-  * 
-  * Interpreter which runs through the source code and executes it line by line.So the code is read and executed all at the same time
-  * 
-  * Interpreted languages are much slower than compiled languages
-  */
+ **JavaScript Engine:**
+  - **Definition:** A JavaScript engine is a computer program that executes JavaScript code. It typically consists of two main components:
+  - **Call Stack:** Where the code is executed using execution contexts.
+  - **Heap:** An unstructured memory pool where objects are stored.
 
- /**
-  * Modern JavaScript engine now use a mix between compilation and interpretation which is called just-in-time compilation.
-  * 
-  * This approach basically compiles the entire code into machine code at once and then executes it right away but there is no portable file to execute.And the execution happens immediately after a compilation.
-  * 
-  * As a piece of JavaScript code enters the engine, the first step is to parse the code. During the parsing process, the code is parsed into a data structure called the abstract syntax tree or AST.
-  * This works by first splitting up each line of code into pieces that are meaningful to the language like the const or function keywords,and then saving all these pieces into the tree in a structured way.
-  * This step also checks if there are any syntax errors and the resulting tree will later be used to generate the machine code.The next step is compilation which takes the generated AST and compiles it into machine code.
-  * This machine code then gets executed right away
-  * 
-  * Javascript engines create a very unoptimized version of machine code in the beginning just so that it can start executing as fast as possible.
-  * Then in the background, this code is being optimized and recompiled during the already running program execution. And after each optimization
-  * the unoptimized code is simply swept for the new more optimized code without ever stopping execution
-  * 
-  * This process is what makes modern engines such as the V-Eight so fast
-  * and all this parsing, compilation and optimization happens in some special threads inside the engine 
-  * that we cannot access from our code.
-  */
+- **Compilation vs. Interpretation:**
+  - **Compilation:** Converts the entire source code into machine code at once, creating a portable file that can be executed later.
+  - **Interpretation:** Runs through the source code and executes it line by line, converting it to machine code just before execution.
+  - **JavaScript’s Approach:** Modern JavaScript engines use Just-In-Time (JIT) compilation, a mix of both compilation and interpretation. The code is compiled into machine code and executed immediately, allowing for faster performance.
 
- /**
-  * we can imagine a JavaScript runtime as a big box or a big container 
-  * which includes all the things that we need in order to use JavaScript in this case, in the browser.
-  * And the heart of any Javascript runtime is always a JavaScript engine
-  * However the engine alone is not enough.In order to work properly,we also need access to the web APIs(Everything related to the DOM,...),
-  * So essentially web APIs are functionalities provided to the engine, but which are actually not part of the JavaScript language itself.JavaScript simply gets access to these APIs through the global window object.
-  * But it still makes sense that the web APIs are also part of the runtime, because again a runtime is just like a box. Next a typical JavaScript runtime
-  * also includes a so called callback queue.This is a data structure that contains all the callback functions that are ready to be executed.
-  * For example we attach event handler functions to DOM elements like a button to react to certain events.And these event handler functions are also called callback functions. For example we attach event handler functions to DOM elements like a button
-  * to react to certain events. And these event handler functions
-  * are also called callback functions
-  */
+- **Optimization:** JavaScript engines create an unoptimized version of machine code initially to start execution quickly. This code is then optimized and recompiled in the background, with the optimized code replacing the unoptimized one without stopping execution.
 
- /**
-  * JavaScript can exist outside of browsers, for example, in Node.js. we have multiple C ++ bindings
-  * and a so called thread pool but we don't have Web API because we are not on a browser
+**JavaScript Runtime:**
+- **Definition:** A JavaScript runtime is a container that includes everything needed to execute JavaScript. The browser is a common runtime.
+  - **Components of a JavaScript Runtime:**
+    - **JavaScript Engine:** Executes the code.
+    - **Web APIs:** Additional functionalities provided by the browser (e.g., DOM manipulation, timers) that are not part of the JavaScript language itself.
+    - **Callback Queue:** Holds callback functions that are ready to be executed, such as event handlers.
+    - **Event Loop:** Takes functions from the callback queue and places them in the call stack for execution, enabling JavaScript’s non-blocking concurrency model.
+
+- **JavaScript Outside the Browser:**
+  - **Node.js Runtime:** Similar to the browser runtime but without web APIs, as it operates outside of the browser. Instead, it uses C++ bindings and a thread pool to manage tasks.
+
+**Conclusion:**
+- Understanding the JavaScript engine and runtime is essential for grasping how JavaScript code is executed. The combination of the engine’s just-in-time compilation and the runtime’s structure enables efficient, non-blocking execution of JavaScript in both the browser and other environments like Node.js.
   */
 
 ///////////////////////////////////////////////////////////////////////////////////
 //Execution Contexts and The Call Stack
 
  /**
-  * Let's start by supposing that our code was just finished compiling.So the code is now ready to be executed.
-  * What happens then, is that a so-called global execution context is created for the top-level code.
-  * And top-level code is basically code that is not inside any function.So again, in the beginning
-  * only the code that is outside of functions will be executed.
-  * 
-  * Functions should only be executed when they are called.
-  * One expression : const first = () => {}
-  * One declaration : function second() {}
-  * These will be declared, so that they can be called later.But the code inside the functions, will only be executed when the functions are called.
- */
+  *Sure! Here's a summary of the video on Execution Contexts and the Call Stack:
 
- /**
-  * Execution context denfined as an environment in which a piece of JavaScript is executed.
-  * It's like a box that stores all the necessary information for some code to be executed.
-  * Such as local variables or arguments passed into a function.
-  * So, JavaScript code always runs inside an execution context
-  * 
-  * In any JavaScript project, no matter how large it is, there is only ever one global execution context.
-  * It's always there as the default context, and it's where top-level code will execute.
-  * 
-  * Once the top-level code is finished,functions finally start to executed as well
-  * 
-  * For each and every function call, and you execution context will be created containing all the information that is necessary to run exactly that function.
-  * And the same goes for methods, of course, because they're simply functions attached to objects remember? Anyway, all these execution contexts together,make 
-  * up the call stack 
-  * 
-  * Now, when all functions are done executing, the engine will basically keep waiting for callback functions to arrive so that it can execute these.
-  */
- 
-  /**
-   * What is inside a varriable context 
-   * The first thing that's inside any execution context is a so-called variable environment.
-   * In this environment, all our variables and function declarations are stored,
-   * and there is also a special arguments object.This object contains,as the name says all the arguments that were passed
-   * into the function that the current execution context belongs to.So basically all the variables
-   * that are somehow declared inside a function, will end up in its variable environment.
-   * 
-   * The second thing is the  scope chain consists of references to variables that are located outside of the current function.
-   * And to keep track of the scope chain,it is stored in each execution context.Finally, each context also gets a special variable called the this keyword.
-   * 
-   * Now, the content of the execution context,so variable environment, scope chain and this keyword is generated in a so-called creation phase.Which happens right before execution.
-   * 
-   * Execution contexts belonging to arrow functions, do not get their own arguments keyword, nor do they get the this keyword. So, basically arrow functions
-   * don't have the arguments object and the this keyword. Instead, they can use the arguments object,and the this keyword
-   * from their closest regular function parent.
-   */
+### **Execution Contexts**
+- **Global Execution Context:** Created when the code is ready to be executed, specifically for top-level code (code not inside any function). Only one global execution context exists.
+- **Function Execution Contexts:** Created whenever a function is called, containing all necessary information (e.g., local variables, arguments) to execute that function.
 
-  /**
-   * Call stack is basically a place where execution contexts get stacked on top of each other, in order to keep track 
-   * of where we are in the programs execution. So the execution context that is on top of the stack, 
-   * is the one that is currently running. And when it's finished running, it will be removed from the stack, 
-   * and execution will go back to the previous execution context.
-   * 
-   * Example : 
-   * 
-   * const name = 'Jonas'
-   * 
-   * const first = () => { //When a function is call,it gets its own execution context so that it can run the code that's inside its body and the context get puts in the call stack on top of the current context and so it's now the new current execution context.
-   *  let a = 1 //This variable will of course be defined in the variable environment of the current execution context, and not in the global context
-   *  const b = second(7,9) //Move to the second() function
-   *  a = a + b //the previous execution context, will now be back to being the active execution context again.
-   *  return a //finally this first function also returns.So the current execution context gets popped off the stack, and the previous context is now the current context where code is executed.
-   *  //In this case, we're back to the global execution context and the line of code where the first function was first called.
-   * }
-   * 
-   * //The first function stopped at this point where the second function was called
-   * and will only continue as soon as this second function returns.Cause JavaScript has only one thread of execution.And so it can only do one thing at a time.
-   * function second(x,y){ //So  a new execution context was created right away for this second function.And once more, it is pushed onto the call stack and becomes the new act of context.
-   * var c = 2
-   * return c //the function will finish its execution when we have a return statement and it basically means that the function's execution context, will be popped off the stacknd disappear from the computer's memory.
-   * }
-   * 
-   * const x = first()
-   * 
-   * when the global execution context is also popped off the stack then the program is really finished
+### **Contents of Execution Contexts**
+- **Variable Environment:** Stores variables and function declarations, and includes a special `arguments` object for functions.
+- **Scope Chain:** Allows functions to access variables outside of their scope.
+- **This Keyword:** A special variable available in execution contexts, with specific rules for arrow functions.
+
+### **Execution Phases**
+- **Creation Phase:** Before execution, the execution context is created, containing the variable environment, scope chain, and `this` keyword.
+- **Execution Phase:** The actual execution of the code takes place.
+
+### **The Call Stack**
+- **Stacking Execution Contexts:** As functions are called, their execution contexts are pushed onto the call stack, with the most recent context at the top.
+- **Managing Execution Order:** The call stack ensures that JavaScript knows which function to return to after completing the current one.
+- **Single Thread:** JavaScript runs on a single thread, meaning only one execution context can be active at a time.
+
+### **Call Stack Example**
+- **Global Context:** Executed first, pushing the global execution context onto the stack.
+- **Function Calls:** When a function is called, a new execution context is created and pushed onto the stack, pausing the previous context.
+- **Return Values:** Once a function completes, its context is popped off the stack, returning control to the previous context.
+
+### **Conclusion**
+- **Execution in the Call Stack:** JavaScript code runs inside execution contexts that are managed by the call stack, ensuring that the order of execution is maintained.
+  
+This video provides a deep dive into how JavaScript code is executed, focusing on the creation and management of execution contexts and the call stack's role in controlling the flow of execution.
    */
 
 ///////////////////////////////////////////////////////////////////////////////////
 //Scope and The Scope Chain
 
-  //scoping controls how our program's variables are organized and accessed by the JavaScript engine.So basically scoping asks the question, where do variables live? Or where can we access a certain variable and where not?
-
-  //Lexical scoping means that the way variables are organized and accessed is entirely controlled by the placement of functions and blocks in the programs code.For example, a function that is written inside another function has access to the variables of the parent function
-
-  //Scope is the space or environment in which a certain variable is declared,
-
-  //Scope of a variable is basically the entire region of our code, where a certain variable can be accessed.
-
   /**
-   * Three different types of scope in JavaScript
-   * The global scope is for top level code.So this is for variables that are declared outside of any function or block.
-   * These variables will be accessible everywhere in our program, in all functions and all blocks.
    * 
-   * The function scope is for variables that are declared inside  function and only accessible inside that function.This is also called a local scope opposed to the global scope.And outside of the function,the variables are then not accessible at all.
    * 
-   * Starting in ES6, blocks creates scopes. And with blocks, we mean everything that is between curly braces, such as the block of an if statement or a for loop. So just like with functions, variables declared inside a block are only accessible 
-   * inside that block and not outside of it.Now, the big difference is that block scopes only apply to variables declared with let or const. So if I declared a variable using var in this block,then that variable would actually still be accessible
-   * outside of the block,and would be scoped to the current function or to the global scope.
-   * 
-   * Finally, also starting in ES6, all functions are now also block scoped, at least in strict mode
+
+1. **Scoping Definition**: Scoping determines where variables are accessible within the code. It asks the question: "Where do variables live?" or "Where can we access a certain variable?"
+
+2. **Types of Scope**:
+   - **Global Scope**: Variables declared outside of any function or block. These are accessible everywhere in the code.
+   - **Function Scope**: Each function creates its own scope, containing variables declared within it. Variables in a function scope are only accessible within that function.
+   - **Block Scope (ES6)**: Blocks, like those within `if` statements or loops, also create their own scope. This applies to variables declared with `let` and `const`, but not `var`.
+
+3. **Lexical Scoping**: In JavaScript, scoping is controlled by where functions and blocks are written in the code. Functions written inside other functions have access to the outer function's variables.
+
+4. **Scope Chain**:
+   - Each scope has access to its own variables and all variables from its outer (parent) scopes.
+   - When a variable is not found in the current scope, the JavaScript engine looks up in the scope chain to find it. This is known as "variable lookup."
+   - The scope chain only works upwards (from child to parent scope) and does not provide access from a parent scope to a child scope.
+
+5. **Scope Chain vs. Call Stack**:
+   - The scope chain is related to where functions are written in the code (lexical scoping) and is unaffected by the order in which functions are called.
+   - The call stack, on the other hand, is based on the order of function calls during execution.
+
+6. **Important Points**:
+   - Variables declared with `let` and `const` are block-scoped, while `var` is function-scoped.
+   - The scope chain only allows access to variables from outer scopes, not from sibling or inner scopes.
+   - The scope chain and the call stack are different but related concepts.
+
+The video emphasizes understanding these concepts to effectively work with JavaScript and how it handles variable accessibility.} birthYear 
+   * @returns 
    */
-
-   /**
-    * If one scope needs to use a certain variable, but cannot find it in the current scope,
-    * it will look up in the scope chain and see if it can find a variable 
-    * in one of the parent scopes. If it can, it will then use that variable. 
-    * And if it can't, then there will be an error. And this process is called variable lookup.
-    * This does not work the other way around.So one scope can only look up in a scope chain, 
-    * but it cannot look down basically
-    * 
-    * So again, for a variable declared with var, block scopes don't apply at all. 
-    * They are functions scoped, not block scoped so it will look up for the nearest function.Also the scope chain apply to block scopes as well.
-    * And therefore in or if block scope, we get access to all the variables from all its outer scopes.
-    */
-
-    /**
-     * the scope chain only works upwards, not sideways by the rule of lexical scoping
-     */
-
 ///////////////////////////////////////////////////////////////////////////////////
 //Scoping in Practice
 
@@ -304,13 +223,49 @@
 ///////////////////////////////////////////////////////////////////////////////////
 //Variable Environment: Hoisting and The TDZ
 
- /*
-  * hoisting make some types of variables accessible, or let's say usable in the code before they are actually declared in the code.
-  * And that is actually what hoisting looks like on the surface.But behind the scenes
-  * that's in fact not what happens. Instead, behind the scenes the code is basically scanned for variable declarations before it is executed.
-  * So this happens during the so-called creation phase of the execution context.
-  * Then for each variable that is found in the code,a new property is created in a variable environment object.
-  * */
+ /**
+  * Certainly! Here's a summary of the video on Variable Environment: Hoisting and the Temporal Dead Zone (TDZ) in JavaScript:
+
+### Key Concepts:
+1. **Execution Context:**
+   - Consists of the variable environment, the scope chain, and the `this` keyword.
+   - Focus is on how variables are created in JavaScript.
+
+2. **Hoisting:**
+   - Hoisting is a mechanism where some variables and functions can be accessed before they are declared in the code.
+   - Commonly misunderstood as variables being "moved" to the top of their scope. However, in reality, JavaScript scans for declarations during the creation phase of the execution context.
+
+3. **Function Declarations:**
+   - Hoisted with their entire function definition, making them usable before their actual declaration in the code.
+   - Block-scoped in strict mode.
+
+4. **`var` Variables:**
+   - Hoisted but initialized with `undefined`. This can lead to unexpected behavior and bugs.
+   - This is one reason `var` is avoided in modern JavaScript.
+
+5. **`let` and `const` Variables:**
+   - Technically hoisted but set to "uninitialized," making them inaccessible until the line of declaration.
+   - They exist in the Temporal Dead Zone (TDZ) from the start of the scope until they are declared.
+
+6. **Function Expressions and Arrow Functions:**
+   - Hoisting behavior depends on whether they are declared with `var`, `let`, or `const`.
+   - If declared with `var`, they are hoisted to `undefined`. If with `let` or `const`, they are not usable until declared due to the TDZ.
+
+### Temporal Dead Zone (TDZ):
+- **TDZ** is the period between the start of the scope and the declaration of a variable where it cannot be accessed.
+- Attempting to access a variable in the TDZ results in a reference error.
+- The TDZ helps catch errors and prevents bugs associated with accessing variables too early.
+
+### Why Hoisting Exists:
+- Hoisting was implemented to allow the use of function declarations before they are defined, which is useful for certain programming techniques.
+- The hoisting of `var` is a byproduct of function hoisting, but it leads to less desirable outcomes, hence the preference for `let` and `const` in modern JavaScript.
+
+### Conclusion:
+- Hoisting, particularly with `var`, can cause problems and bugs. 
+- Modern best practices involve using `let` and `const` to avoid these issues and take advantage of the TDZ for better error handling.
+
+The video ends with a suggestion to practice hoisting with real examples.
+  */
   
  /**
   * hoisting does not work the same for all variable types
@@ -327,32 +282,6 @@
   *  | function expressions and arrow functions  | depends if they were created using var or const or let.
   *  ---------------------------------------------------------------------------------------------------------
   * 
-  * Actual declaration : We can use function declarations before they are actually declared in the code because they are stored in the variable environment object,
-  * even before the code starts executing
-  * 
-  * Block scope is only true for strict mode in function declarations 
-  * 
-  * When we try to access a var variable before it's declared in a code, we don't get the declared value but we get undefined.
-  * 
-  * let or const variables are actually hoisted but their value is basically set to an initialized. So there is no value to work with at all.
-  * And so in practice, it is as if hoisting was not happening at all.
-  * Instead, we say that these variables are placed in a so-called Temporal Dead Zone or TDZ which makes it so that we can't access the variables between the beginning of the scope 
-  * and the place where the variables are declared.So as a consequence,if we attempt to use a let or const variable
-  * before it's declared, we get an error.
-  * 
-  * 
-  * A function expression or arrow function created with var is hoisted to undefined.
-  * But if created with let or const, it's not usable before it's declared in a code because of the Temporal Dead Zone.
-  * So just like normal variables
-  * 
-  * 
-  * The main reason that the TDZ was introduced in ES6 is that the behavior I described before makes it way easier to avoid and catch errors. Because using a variable that is set to undefined
-  * before it's actually declared can cause serious bugs which might be hard to find.
-  * 
-  * A second and smaller reason why the TDZ exists is to make const variables actually work the way they are supposed to.
-  * So as you know, we can't reassign const variables.So it will not be possible to set them to undefined first and then assign their real value later.
-  * Const should never be reassigned.And so it's only assigned when execution
-  * actually reaches the declaration.And that makes it impossible to use the variable before.
   */
 
 ///////////////////////////////////////////////////////////////////////////////////

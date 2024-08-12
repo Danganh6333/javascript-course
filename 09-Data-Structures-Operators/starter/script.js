@@ -819,8 +819,66 @@ const restaurant8 = {
 
 ///////////////////////////////////////////////////////////////////////////////////
 //Enhanced Object Literals
+ 
+const weekdates = ['mon','tue','wed','thu','fri','sat' , 'sun']
 
-const restaurant9 = {
+const openingHours1 = { //create a separate object
+  //The third enhancement is that we can now actually compute property names instead of having to write them out manually and literally.
+  [weekdates[3]]: {
+    open: 12,
+    close: 22,
+  },
+  [weekdates[4]]: {
+    open: 11,
+    close: 23,
+  },
+  [weekdates[5]] :{
+    open: 0, // Open 24 hours
+    close: 24,
+  },
+ }
+
+ 
+ const restaurant9 = {
+  name: 'Classico Italiano',
+  location: 'Via Angelo Tavanti 23, Firenze, Italy',
+  categories: ['Italian', 'Pizzeria', 'Vegetarian', 'Organic'],
+  starterMenu: ['Focaccia', 'Bruschetta', 'Garlic Bread', 'Caprese Salad'],
+  mainMenu: ['Pizza', 'Pasta', 'Risotto'],
+  //now, we still want to have the opening hours object inside of the restaurant.
+
+  ////the first enhancement
+  openingHours : openingHours1,
+ 
+  
+  //the second enhancement to object literals is about writing methods
+  
+  oder(starterIndex,mainIndex){//So essentially, we create a property just like we do all the other properties and then we set that to a function expression.
+    return[this.starterMenu[starterIndex],this.mainMenu[mainIndex]]
+  } ,
+  
+  orderPasta(ing1,ing2,ing3){
+    console.log(`Here is your delicious pasta with ${ing1},${ing2},${ing3}`);
+    
+  },
+  orderDelivery({
+    starterIndex = 2,
+    mainIndex = 3,
+    time= '20:00',
+    address = 'Hanoi'
+  }){
+    console.log(`Order received ${this.starterMenu[starterIndex]} and ${this.mainMenu[mainIndex]} will be delivered to ${address} ad ${time}`);  
+  },
+  oderPizza(mainIngredients,...otherIngredients){
+    console.log(mainIngredients);
+    console.log(otherIngredients);
+  }
+ };
+ console.log(restaurant9);
+ 
+///////////////////////////////////////////////////////////////////////////////////
+//Optional Chaining (?.)
+const restaurant10 = {
   name: 'Classico Italiano',
   location: 'Via Angelo Tavanti 23, Firenze, Italy',
   categories: ['Italian', 'Pizzeria', 'Vegetarian', 'Organic'],
@@ -861,6 +919,528 @@ const restaurant9 = {
     console.log(otherIngredients);
   }
  };
+
+
+ //This can get out of hand pretty quickly when we have deeply nested objects with lots of optional properties so it will be too long to check
+ if(restaurant10.openingHours  && restaurant10.openingHours.mon) console.log(restaurant10.openingHours.mon.open);//We do actually get an error because the results of this was undefined.And then undefined.open is really an error. So that's the error that we get here. So in order to avoid this error, we would first have to check if this here actually exists.
  
+ //if(restaurant10.openingHours.fri) console.log(restaurant10.openingHours.fri.open);
+ //There is a better way by using Optional Chaining (?.)
+ //With optional chaining, if a certain property does not exist, then undefined is returned immediately.
+ console.log(restaurant10.openingHours.mon?.open ); //if the property that is before this question mark here exist then the property will be read from there.But if not, then immediately undefined will be returned
+ //And exists here actually means the nullish concept.So, a property exists if it's not null and not undefined.So if it's zero or the empty string, then it still exists
+
+ //here we are testing for both opening hours and for Monday.
+ console.log(restaurant10.openingHours.mon?.open);//Monday is optional, and that's why we have the question mark here basically, asking if it exists
+ console.log(restaurant10.openingHours?.mon?.open);
+  
+
+ //Example 
+ //Loop over this array and then log to the console, whether the restaurant is open or closed on each of the days.
+ const days = ['mon','tue','wed','thu','fri','sat' , 'sun']
+ for (const day of days) {
+  console.log(day);
+  // restaurant10.openingHours.day //we cannot do this because this is not an actual property name of the object.And so if we want to use a variable name as the property name, we need to use the brackets notation.
+  const open = restaurant10.openingHours[day]?.open ?? closed //ask if open exists and set the nullish coalescing operator cause the Saturday
+  console.log(`On ${day}, we open at ${open}`);
+  //In Sarturday we open at zero and zero is a falsy value.And so therefore it will then trigger this second part of the operator.
+ }
+
+ //Check if the methods exist before we call it
+ //this optional chaining operator will check if order actually exists.And if it doesn't,well then it will immediately return undefined.And so all of this then returns undefined.
+ console.log(restaurant10.oder?.(0,2) ?? 'Method does not exist');
+
+ //Get the name of the first element of this array
+ const users = [{ name: 'Jonas', email: 'hello@jonas.io' }];
+ console.log(users[0]?.name ?? 'User array empty');
+
+ //And without optional chaining,we would have to write something like this.
+ if(users.length > 0) console.log(users[0].name); 
+ else console.log('User array empty');
  
+///////////////////////////////////////////////////////////////////////////////////
+//Looping Objects: Object Keys, Values, and Entries
  
+const restaurant11 = {
+  name: 'Classico Italiano',
+  location: 'Via Angelo Tavanti 23, Firenze, Italy',
+  categories: ['Italian', 'Pizzeria', 'Vegetarian', 'Organic'],
+  starterMenu: ['Focaccia', 'Bruschetta', 'Garlic Bread', 'Caprese Salad'],
+  mainMenu: ['Pizza', 'Pasta', 'Risotto'],
+
+  openingHours: {
+    thu: {
+      open: 12,
+      close: 22,
+    },
+    fri: {
+      open: 11,
+      close: 23,
+    },
+    sat: {
+      open: 0, // Open 24 hours
+      close: 24,
+    },
+  },
+  oder: function(starterIndex,mainIndex){
+    return[this.starterMenu[starterIndex],this.mainMenu[mainIndex]]
+  } ,
+  orderPasta : function(ing1,ing2,ing3){
+    console.log(`Here is your delicious pasta with ${ing1},${ing2},${ing3}`);
+    
+  },
+  orderDelivery : function({
+    starterIndex = 2,
+    mainIndex = 3,
+    time= '20:00',
+    address = 'Hanoi'
+  }){
+    console.log(`Order received ${this.starterMenu[starterIndex]} and ${this.mainMenu[mainIndex]} will be delivered to ${address} ad ${time}`);  
+  },
+  oderPizza : function(mainIngredients,...otherIngredients){
+    console.log(mainIngredients);
+    console.log(otherIngredients);
+  }
+ };
+
+ //Looping over property names. And remember they are also called keys.
+ 
+ const properties = Object.keys(openingHours)
+ console.log(properties);
+
+ //Compute how many properties are in the object.
+ let openStr = console.log(`We are open on ${properties.length}`);
+ 
+
+ for (const day of properties) {
+    openStr += `${day}`  
+ }
+
+ console.log(openStr);
+
+ //Looping over property values
+
+ const values = Object.values(openingHours)
+ console.log(values);
+ 
+///////////////////////////////////////////////////////////////////////////////////
+//Sets
+
+ //sets and maps were introduced in ESX
+
+ //A set is basically just a collection of unique values. So that means that a set can never have any duplicates.
+
+ //Create a set
+ const ordersSet = new Set(['Pasta','Pizza','Pizza','Risotto','Pizza'])
+
+ //Set can hold mixed data types.
+ console.log(ordersSet); //When we log it out we only see three value that are pasta, pizza and risotto.
+ //All the duplicates are actually gone
+
+ /**
+  * A set is very different from an array.
+  * So first, because its elements are unique.
+  * And second, because the order 
+  * of elements in the set is irrelevant.
+  */
+
+ //We can also pass in a String because a String is iterable 
+ console.log(new Set('Jonas'));//now we get a set with these five elements j,o,n,a,s
+
+ console.log(ordersSet.size); //In set,it is size not length like in  array
+ console.log(ordersSet.has('Pizza'));//check if a certain element is in a set.
+ 
+ //add new elements to a set.
+ ordersSet.add('Garlic Bread') //Only one garlic bread is added
+ ordersSet.add('Garlic Bread')
+
+ //Delete element
+ ordersSet.delete('Risotto')
+
+ //Retrieve value out of a set
+ //There's really no need for getting data out of a set. That's because if all values are unique, and if their order does not matter, then there is no point of retrieving values out of a set.
+
+ //Delete all element 
+ //ordersSet.clear()
+
+ //Looping over set 
+ for (const order of ordersSet) {
+  console.log(order);
+ }
+ 
+ //the main use case of sets is to remove duplicate values of arrays.
+ //Example 
+ const Staff = ['Waiter','Chef','Waiter','Manager','Chef','Waiter']
+ const staffUnique = [...new Set(Staff)]//Using spread operator to unpack the set and then these elements will be put into the newly constructed array.
+ console.log(staffUnique);
+
+ //Only wanted to know how many different positions there are
+ console.log(new Set(['Waiter','Chef','Waiter','Manager','Chef','Waiter']).size);
+ 
+ //Checking how many different letters there are in a string
+ console.log(new Set('Jonasschmedtmann').size);
+ 
+///////////////////////////////////////////////////////////////////////////////////
+//Maps: Fundamentals
+ 
+ //A map is a data structure that we can use to map values to keys. So, just like an object data is stored in key value pairs in maps.
+
+ //The big difference between objects and maps is that in maps, the keys can have any type but in objects, the keys are basically always strings.
+ 
+ const rest = new Map()
+ //here, we pass into arguments.The first is the key name.And then, the name of the restaurant itself.
+ rest.set('name','Classico Italiano')
+ rest.set(1,'Firenze, Italy')
+ console.log(rest.set(2,'Lisbon, Portugal'));
+ 
+ //The fact that the set method actually returns the updated map allows us to change the set method like this.
+ rest.set('categories',['Italian', 'Pizzeria', 'Vegetarian', 'Organic']).set('open',11).set('close',23).set(true,'We are open').set(false,'We are close')//calling the set method returns the updated map And so, we can call set again on that map. And, we can continue this even further
+
+ //read data from a map
+ console.log(rest.get('name'));//Pass the name of the key
+ console.log(rest.get(true));
+ console.log(rest.get(1));
+ 
+ const time = 21
+ rest.get(rest.get(time > rest.get('open') && time < rest.get('close') )) //Checking if the time is between 23 and 11 and by using the boolean key we can log out the value of the true and false key
+
+ //Check if the map contain a certain key
+ console.log(rest.has('categories'));
+
+ //Delete from the map by using the key 
+ rest.delete(2)
+
+ //remove all the elements from the map
+ //  rest.clear()
+ console.log(rest);
+ console.log(rest.size);
+
+ //Using array or objects as map key
+ const arr2 = [1,2]
+ rest.set(arr2,'Test')
+ rest.set(document.querySelector('h1','Heading')) //Using the document.querySelector as an object 
+
+ console.log(rest.get(arr));
+
+ // rest.set([1,1],'Test')
+ ///console.log(rest.get[1,1]);//Eventhough both array are [1,1] but they are not the same object in the heap so we cannot log out the value from array key like this
+  
+///////////////////////////////////////////////////////////////////////////////////
+//Maps: Iteration
+ 
+const restaurant12 = {
+  name: 'Classico Italiano',
+  location: 'Via Angelo Tavanti 23, Firenze, Italy',
+  categories: ['Italian', 'Pizzeria', 'Vegetarian', 'Organic'],
+  starterMenu: ['Focaccia', 'Bruschetta', 'Garlic Bread', 'Caprese Salad'],
+  mainMenu: ['Pizza', 'Pasta', 'Risotto'],
+
+  openingHours: {
+    thu: {
+      open: 12,
+      close: 22,
+    },
+    fri: {
+      open: 11,
+      close: 23,
+    },
+    sat: {
+      open: 0, // Open 24 hours
+      close: 24,
+    },
+  },
+  oder: function(starterIndex,mainIndex){
+    return[this.starterMenu[starterIndex],this.mainMenu[mainIndex]]
+  } ,
+  orderPasta : function(ing1,ing2,ing3){
+    console.log(`Here is your delicious pasta with ${ing1},${ing2},${ing3}`);
+    
+  },
+  orderDelivery : function({
+    starterIndex = 2,
+    mainIndex = 3,
+    time= '20:00',
+    address = 'Hanoi'
+  }){
+    console.log(`Order received ${this.starterMenu[starterIndex]} and ${this.mainMenu[mainIndex]} will be delivered to ${address} ad ${time}`);  
+  },
+  oderPizza : function(mainIngredients,...otherIngredients){
+    console.log(mainIngredients);
+    console.log(otherIngredients);
+  }
+ };
+
+ //Before we would have used the set method but now we can specify an array 
+ const question = new Map([
+  //in each of these arrays, the first position is gonna be the key. And the second position is gonna be the value.
+  ['question', 'What is the best programming language in the world?'],
+  [1, 'C'],
+  [2, 'Java'],
+  [3, 'JavaScript'],
+  ['correct', 3],//The correct answer
+  //The result 
+  [true, 'Correct 🎉'],
+  [false, 'Try again!'],
+]);
+
+ //Convert object to map
+ const hoursMap = new Map(Object.entries(openingHours))
+ console.log(hoursMap);
+
+ //Quiz App 
+ //Log out the question
+ console.log(question.get('question'));
+ 
+ // restructure into two separate variables.
+ for (const [key,value] of question) { //The only difference is that for the object, we needed object.entries. And that's just because the object is not an iterable
+  if(typeof key == 'number') console.log(`Answer ${key} : ${value}`); //print an element if the key is a number
+}
+ //Answer 
+ const answer = Number(prompt('Your answer'))//Convert prompt into number
+ console.log(answer);
+ 
+ console.log(question.get(question.get('correct') == answer))//The question.get('correct') == answer will return a boolean and the question.get will be true or false
+ 
+ //Convert map to array
+ console.log([...question]);
+
+ console.log([...question.keys()]);//All the key
+ console.log([...question.values()]);//All the map 
+
+///////////////////////////////////////////////////////////////////////////////////
+//Summary: Which Data Structure to Use?
+
+ /**
+  * ### Summary: Choosing the Right Data Structure
+
+**Sources of Data:**
+1. **Program Source Code:** Hard-coded data like status messages.
+2. **User Interface:** Data from forms or DOM elements (e.g., tasks in a todo app).
+3. **External Sources:** Data from web APIs (e.g., weather, movies, currency rates).
+
+**JavaScript Data Structures:**
+1. **Arrays:**
+   - **Use for:** Simple lists of values, preserving order, allowing duplicates.
+   - **Advantages:** Extensive array methods for data manipulation.
+   - **Example:** Array of recipe objects.
+
+2. **Sets:**
+   - **Use for:** Collections of unique values.
+   - **Advantages:** Faster performance for operations like searching and deleting. Useful for removing duplicates.
+   - **Note:** Not meant to replace arrays, but complement them when dealing with unique items.
+
+3. **Objects:**
+   - **Use for:** Key-value pairs where keys are typically strings.
+   - **Advantages:** Easy to write and access data using dot or bracket notation. Good for storing functions as methods.
+   - **Common Use:** Handling JSON data.
+
+4. **Maps:**
+   - **Use for:** Key-value pairs with keys of any data type, requiring efficient performance.
+   - **Advantages:** Better performance for key-value storage, easy to iterate, compute size.
+   - **Note:** Not ideal for functions or methods as values.
+
+**Additional Data Structures:**
+- **WeakSets and WeakMaps:** Advanced structures for handling collections with automatic garbage collection.
+- **Other Structures:** Stacks, queues, linked lists, trees, hash tables (not built into JavaScript, but used in programming).
+
+**Conclusion:**
+- Use **arrays** for ordered lists with possible duplicates.
+- Use **sets** for collections of unique values and performance optimization.
+- Use **objects** for simple key-value storage, especially when working with JSON or methods.
+- Use **maps** for advanced key-value pairs, especially with non-string keys and performance needs.
+
+This overview helps in selecting the appropriate data structure based on data requirements and operations.
+  */
+
+///////////////////////////////////////////////////////////////////////////////////
+// Working With Strings - Part 1
+
+ const airline = 'TAP Air Portugal'
+ const plane = 'A320'
+
+ console.log(plane[0]);
+ console.log('B737',[0]); //String is iterable too
+ 
+ console.log(airline.length);// read the length property of strings
+ console.log('B737'.length);
+ 
+ console.log(airline.indexOf('r')); //get the position in which a certain letter is in the string but this here will only give us the first occurrence
+ console.log(airline.lastIndexOf('r'));//So we use lastIndexOf
+
+ console.log(airline.indexOf('portugal'));//This is case sensitive.So if I search with lowercase, then we get minus one because this can now not be found in this airline's string.
+
+ //extract part of a string
+console.log(airline.slice(4));//this 4 here is the position at which the extraction will start.
+ //Four here is the A in Air 
+ console.log(airline.slice(4,7));//Specify an end parameter so that the end value is actually not included in the string 
+ ///The length of the extracted string is always going to be end minus beginning
+
+ //
+
+ // it's actually impossible to mutate strings 
+ //if we wanted to use this string now we would have to store it first into some variable or some data structure.
+ //So all the method always return a new string
+ 
+ console.log(airline.slice(0,airline.indexOf('')));//Extract till the space blank
+ console.log(airline.slice(0,airline.lastIndexOf('')));//Extract till the last space blank
+
+ console.log(airline.slice(-2));//This will extract from the end of the array
+ console.log(airline.slice(1,1));
+
+ const checkMiddleSeat = function(seat){
+ //In small planes, like the A320, or the Boeing 737, we only have six seats in one row. And that means that B and E are the middle seats.
+  const s = seat.slice(-1)//Taking the last value
+  if(s === 'B' || s === 'E') console.log('You got the millde seat :(');
+  else console.log('You got lucky');
+  //Whenever we call a method on a string,JavaScript will automatically behind the scenes convert that string primitive to a string object with the same content.
+  //this process is called boxing because it basically takes our string and puts it into a box which is the object.
+ }
+ checkMiddleSeat('11B')
+ checkMiddleSeat('23C')
+ checkMiddleSeat('3E')
+
+ console.log(typeof new String('jonas'));//This is a object
+ console.log(typeof new String('jonas').slice(1));//This is a string
+ 
+///////////////////////////////////////////////////////////////////////////////////
+// Working With Strings - Part 2
+ 
+ const airline1 = 'TAP Air Portugal'
+
+ //changing the case of a string.
+ console.log(airline1.toLowerCase());
+ console.log(airline1.toUpperCase());
+ 
+ //fix the capitalization in a name
+ const passenger = 'jOnAS' 
+ const passengerLowerCase = passenger.toLowerCase() //Turn the string to lower case
+ const passengerCorrect = passengerLowerCase[0].toUpperCase() + passengerLowerCase.slice(1) //Turn the first element into uppercase and add the rest of the string starting fron 1
+ console.log(passengerCorrect);
+
+ //Comparing Email
+ const email = 'hello@jonas.io'
+ const loginEmail = 'Hello@Jonas.io \n'
+ 
+ const lowerCase = loginEmail.toLowerCase()
+ const trimmedEmail = loginEmail.trim()//Cutting the white space of ' \n'
+ console.log(trimmedEmail);
+ console.log(email === trimmedEmail);
+
+ //replacing
+ const priceGB = '288,97£'
+ const priceUS = priceGB.replace('£','$').replace(',','.') //replace the pound with the dollar sign and the coma with the period
+ console.log(priceUS);
+
+ //we can also replace entire words, not just single characters
+ const anouncement = 'All passengers come to barding door 23. Boarding door 23'
+ //replace creates a brand new string so it doesn't mutate the original one and it is case sensitive
+ console.log(anouncement.replace('door','gate'));//this only replace the first occurrence of this door string
+ 
+ //We are just gonna use a very simple regular expression to tell the replace method that it should actually target all the occurrences
+ console.log(anouncement.replace(/door/g,'gate')); //g mean global 
+
+ //Boolean 
+ //three simple methods that return booleans.
+ const plane1 = 'A320neo'
+ console.log(plane1.includes('Boeing'));
+ console.log(plane1.startsWith('Airb'));
+
+ //check if the current plane is part of the new airbus family.
+ if(plane1.startsWith('Airbus') && plane1.endsWith('neo')) {
+  console.log('Part of the NEW Airbus family');
+ }
+ 
+ //check if the baggage officer and passenger is basically allowed to be checked-in.
+ const checkBaggage = function(items){
+   //when we receive input from a user, we usually always start by putting everything into lower case
+  const baggage = items.toLowerCase()
+  if(baggage.includes('knife') || baggage.includes('gun')){
+    console.log('You are not allowed');
+    
+  }else{
+    console.log('Ok,you can go');
+    
+  }
+ }
+ checkBaggage('I have a laptop,some food and a pocket Knife')
+ checkBaggage('Socks and camera')
+ checkBaggage('Got some snacks and a gun for protection')
+
+///////////////////////////////////////////////////////////////////////////////////
+// Working With Strings - Part 3
+
+ //split allows us to split a string into multiple parts based on a divider string
+
+ console.log('a+very+nice+string'.split('+'));
+ console.log('Jonas Schmedtmann'.split(''));
+
+ const [firstName, lastName] = 'Jonas Schmedtmann'.split('')
+ 
+ //we want to start with Mr. and then the last name in uppercase
+ const newName = ['Mr.',firstName,lastName.toUpperCase()].join('') //We then join the array into a string with the ' ' space
+
+ const capitalizeName = function(name){
+  const names = name.split(' ')
+  const namesUpper = []
+  for (const n of names) { 
+      //namesUpper.push(n[0].toUpperCase() + n.slice(1))
+      //Different way
+      namesUpper.push(n.replace(n[0],n[0].toUpperCase()))
+  }
+  console.log(namesUpper.join(' '))
+}
+ capitalizeName('jessica ann smith davis')
+ capitalizeName('jonas schmedtmann')
+ 
+ //padding a string means to add a number of characters to the string until the string has a certain desired length.
+ const message = 'Go to gate 23'
+ console.log(message.padStart(2,'+'));//we want it to be 25 characters long,And then the character that we want to pad the string with at the start.
+ console.log(message.padEnd(2,'+').padStart(2,'+'));
+
+ //Masking the last four digit of the Credit card
+ const maskedCreditCard = function(number) {
+  // const str = new String()
+  const str = number + '' //Turn the number to a string
+  const last = str.slice(-4) //Gettign the 4 last digits
+  return last.padStart(str.length,'*')
+
+ }
+
+ console.log(maskedCreditCard(43454746434423));//**********4423
+ console.log(maskedCreditCard(344224649464543));
+
+ //Repeat the same string 
+ const message3 = 'Bad weather... All departures Delayed...'
+ console.log(message3.repeat[3]);//Repeat 3 times
+
+ const planesInLine = function (n) {
+  console.log(`There are ${n} planes in line ${'✈️'.repeat(n)}`);//Repeat the plane emoji n times
+ }
+ planesInLine(8)
+ planesInLine(8)
+ 
+///////////////////////////////////////////////////////////////////////////////////
+// String Methods Practice
+
+const flights2 =
+  `_Delayed_Departure;fao93766109;txl2133758440;11:25
+  +_Arrival;bru0943384722;fao93766109;11:45
+  +_Delayed_Arrival;hel7439299980;fao93766109;12:05
+  +_Departure;fao93766109;lis2323639855;12:30`;
+
+// 🔴 Delayed Departure from FAO to TXL (11h25)
+//              Arrival from BRU to FAO (11h45)
+//   🔴 Delayed Arrival from HEL to FAO (12h05)
+//            Departure from FAO to LIS (12h30)
+
+const getCode = str => str.slice(0, 3).toUpperCase();
+
+for (const flight of flights2.split('+')) {
+  const [type, from, to, time] = flight.split(';');
+  const output = `${type.startsWith('_Delayed') ? '🔴' : ''}${type.replaceAll(
+    '_',
+    ' '
+  )} ${getCode(from)} ${getCode(to)} (${time.replace(':', 'h')})`.padStart(36);
+  console.log(output);
+}
+
