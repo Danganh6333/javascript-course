@@ -292,9 +292,6 @@
 ///////////////////////////////////////////////////////////////////////////////////
 //Coding Challenge #1
 
- ///////////////////////////////////////
-// Coding Challenge #1
-
  /* 
  Let's build a simple poll app!
 
@@ -336,9 +333,136 @@
       console.log(answer);
     //Register the answer
     //Check if the value is actually a number and if the answer is below the length of the array like if the answer is 10, then that doesn't make any sense.
-      typeof answer === 'number' && answer < this.answer.length && this.answer[answer]++ // if the option is 3, increase the value AT POSITION 3 of the array by 1
+      typeof answer === 'number' && answer < this.answers.length && this.answers[answer]++ // if the option is 3, increase the value AT POSITION 3 of the array by 1
+      this.displayResults()
+      this.displayResults('string')
     },  
+    //To display the result
+    displayResults(type = 'array'){ //Preset the type as an array as the default
+      if(type === 'array'){//If type is 'array', display the results array using console.log()
+        console.log(this.answers);
+      }else if(type === 'string'){
+        //Poll results are 12,2,1,121
+        console.log(`Poll results are ${this.answers.join(',')}`);
+        
+      }
+    }
   };
 
+  document.querySelector('.poll').addEventListener('click',poll.registerNewAnswer.bind(poll))//Point to the poll object
 
+  /**
+   * The bonus part of the challenge is asking you to use the displayResults method to display results from two test arrays ([5, 2, 3] and [1, 5, 3, 9, 6, 1]). These arrays are not part of the poll object, so you need to consider how to use the this keyword correctly when calling the displayResults method with these external arrays.
+   */
+  //[5, 2, 3]
+  //[1, 5, 3, 9, 6, 1]
+ poll.displayResults.call({answers : [5,2,3]},'string') //Using the call method to  manually set  the this keyword to a new object, which as the answers property has that new array
+ poll.displayResults.call({answers : [1, 5, 3, 9, 6, 1]},'string')
+
+///////////////////////////////////////////////////////////////////////////////////
+//Immediately Invoked Function Expressions (IIFE)
+
+ //Sometimes in JavaScript, we need a function that is only executed once. And then never again. So basically a function that disappears right after it's called once.
+  const runOnce = function () {
+    console.log('This will never run again');
+  }
+  runOnce();//This is not one time use because we can actually run this function again.
+  runOnce()
+ //We can trick  JavaScript into thinking that this is just an expression. And we do that by simply wrapping all of this into parentheses. And so now, we basically transformed the statement that we had before into an expression
+ (function() { //This is called the Immediately Invoked Function Expression
+  console.log('This will never run again');
+ })();//Calling by adding the ()
+
+ //Using the arrow
+ (() =>  console.log('This will never run again'))()
+
+
+ //Immediately Invoked Function Expressions are not that used anymore. Because if all we want is to create a new scope for data privacy. All we need to do, is to just create a block like this
+ {
+  const isPrivate = 23 //We create a block with const where the outside cannot accessed
+  var isPrivate = 34 //This can be use outside
+ } 
   
+///////////////////////////////////////////////////////////////////////////////////
+//Closures
+  
+ //This is call secureBooking because passengerCount variable cannot be manipulated and accessed from the outside.
+ const secureBooking = function () {
+  let passengerCount = 0
+
+  return function(){
+    passengerCount++
+    console.log(`${passengerCount} passenger`);
+    
+  }
+ }
+
+ const booker = secureBooking()
+
+ /**
+  * ### Summary of Closure Concept:
+
+A **closure** is a powerful feature in JavaScript that allows a function to remember and access variables from its lexical scope, even after the function that created those variables has finished executing. This means that a function can "close over" the environment in which it was created, retaining access to variables that should technically no longer be available once the function's execution context is gone.
+
+### Explanation with Example:
+
+Consider the following code:
+
+```javascript
+const secureBooking = function () {
+  let passengerCount = 0;
+
+  return function() {
+    passengerCount++;
+    console.log(`${passengerCount} passenger`);
+  };
+};
+
+const booker = secureBooking();
+//booker function is able to increment the passengerCount to one, then to two and then to three.
+//How can the Booker function update the passengerCount variable that's defined in the secure booking function that actually has already finished executing
+
+that actually has already finished executing.
+booker();//Log out 1 passengers
+booker();//Log out 2 passengers
+booker()://Log out 3 passengers
+```
+
+1. **Function Creation**: The `secureBooking` function defines a variable `passengerCount` and returns an inner function that increments and logs `passengerCount` whenever it is called.
+
+2. **Calling the Function**: When `secureBooking` is called and assigned to `booker`, the inner function is returned and stored in `booker`.
+
+3. **Closure in Action**: Even after `secureBooking` has finished executing and its execution context is removed from the call stack, the `booker` function still has access to `passengerCount`. This is because of the closure. The closure "remembers" the environment in which the `booker` function was created, so `booker` can still manipulate and access `passengerCount`.
+
+### Key Points:
+
+- **Closure Creation**: Closures are created automatically when a function is defined within another function and retains access to the parent function’s variables.
+  
+- **Persistent Environment**: The inner function retains access to variables from the outer function’s scope even after the outer function has completed execution.
+
+- **No Manual Creation**: You don't manually create closures. They happen naturally in JavaScript whenever an inner function accesses variables from its outer function's scope.
+
+- **Use Case**: Closures are widely used in JavaScript for things like data encapsulation, creating private variables, and in callback functions.
+
+### Example Visualization:
+
+Imagine the function is like a person carrying a backpack (closure) filled with variables. Even after the function's original environment (or home) is gone, it still carries that backpack around, allowing it to access those variables anywhere it goes.
+
+### Final Note:
+
+Closures are fundamental to understanding JavaScript’s behavior, especially in asynchronous programming and when working with callbacks. They allow functions to maintain access to their scope even after the context in which they were created has finished executing.
+  */
+
+///////////////////////////////////////////////////////////////////////////////////
+//More Closure Examples
+
+ let f;//Defining a empty value name f
+
+ const g = function() {
+  const a = 23;
+  f = function() { //Reassign the f varriable and assign it a function value
+    console.log(a * 2);
+  }
+ }
+ g()
+ f()

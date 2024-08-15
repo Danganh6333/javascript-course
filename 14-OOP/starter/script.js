@@ -1,1 +1,18 @@
 'use strict';
+
+///////////////////////////////////////////////////////////////////////////////////
+//What is Object-Oriented Programming?
+
+ /**
+  * The video provides an introductory overview of Object-Oriented Programming (OOP), explaining its core concepts, principles, and benefits.
+  * 1. **Introduction to OOP**: Object-Oriented Programming (OOP) is a programming paradigm centered around objects. It allows us to model real-world entities (e.g., users, to-do list items) as objects that contain both data (properties) and behavior (methods). Objects in OOP serve as self-contained blocks of code, enabling better organization and interaction through a public interface or API.
+  * 2. **Why OOP Exists**: OOP was developed to improve code organization, making it more flexible and easier to maintain, especially in large codebases. Before OOP, unstructured code, often referred to as "spaghetti code," made maintenance and the addition of new features difficult. OOP emerged as a solution to this problem, becoming the most popular programming paradigm in large-scale software engineering. Other paradigms like functional programming also aim to avoid spaghetti code but differ in approach.
+  * 3. **Classes and Objects**: In OOP, classes act as blueprints for creating objects. These classes describe the structure and behavior of objects, but they don’t contain actual data. Objects, or instances, are created based on these classes and contain real data. For example, a user class might describe a user with properties like username and email, and methods like login. Multiple objects (users) can be created from this class, each with different data but sharing the same behavior.
+  * 4  **Designing Classes**: Designing classes involves modeling real-world data into a structured format. There isn't a single correct way to design a class, but four fundamental principles guide good class design: abstraction, encapsulation, inheritance, and polymorphism.
+  * 5. **Principles of OOP**:
+    - **Abstraction**: Abstraction involves hiding unnecessary details to simplify interaction with the object. For example, a phone user interacts with a simple interface (buttons, screen) without worrying about the internal workings (vibration motor, voltage). In programming, abstraction allows developers to use functions like `addEventListener` without knowing how they work internally.
+    - **Encapsulation**: Encapsulation refers to keeping some properties and methods private within a class, preventing external code from directly accessing or modifying them. This protects the internal state of an object and reduces the risk of bugs. Public methods are exposed through an API, allowing controlled interaction with the object.
+    - **Inheritance**: Inheritance allows a child class to inherit properties and methods from a parent class. For example, an admin class might inherit from a user class, gaining all its properties and methods while adding its unique features. This reduces code duplication and forms a class hierarchy.
+    - **Polymorphism**: Polymorphism enables a child class to override a method inherited from a parent class, providing a specialized implementation. For instance, an admin class might have a more secure login method than a regular user class. This allows different classes to provide unique implementations of the same method 
+  * 6. **Conclusion**: The video concludes by emphasizing the importance of understanding these fundamental concepts before moving on to how OOP is implemented in JavaScript. While JavaScript implements OOP differently than traditional languages, grasping these principles is crucial for effective programming.
+  */

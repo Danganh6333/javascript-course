@@ -249,5 +249,19 @@ btnSort.addEventListener('click', function (e) {
 });
 
 /////////////////////////////////////////////////
-/////////////////////////////////////////////////
-// LECTURES
+// Converting and Checking Numbers
+
+ //In JavaScript, all numbers are presented internally as floating point numbers. So basically, always as decimals,
+ console.log(23 === 23.0);
+ 
+ //there are certain numbers that are very difficult to represent in base 2. And one example of that is the fraction 0.1.
+ console.log(0.1 + 0.2);
+ console.log(0.1 + 0.2 === 0.3);
+
+ //Ways to convert String to number
+ console.log(Number('23'));
+ console.log(+'23');//when JavaScript sees the plus operator, it will do type coercion.
+ 
+ 
+ 
+ 
