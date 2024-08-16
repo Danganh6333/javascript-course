@@ -263,7 +263,7 @@ This summary provides a high-level understanding of the Bankist app, its feature
     containerMovements.insertAdjacentHTML(`afterbegin`,html)//Check the MDN for further explain
   })
  }
- displayMovements(account1.movements)
+//  displayMovements(account1.movements) //let's remove this because we do not want to call these functions right in the beginning, when our script is loaded.We only want to calculate and display the balance,band the movements, and the summary when we get the data that we want to display
 
 ///////////////////////////////////////////////////////////////////////////////////
 //Coding Challenge #1
@@ -422,12 +422,13 @@ The video emphasizes the importance and frequent use of these methods in modern 
  for (const mov of movements) balance2 += mov;
 
  //Caculate and display balance
- const calcPrintBalance = function(mov) {
-  const balance = movements.reduce((acc,mov) => acc + mov, 0)
-  labelBalance.textContent = `${balance} EUR`
+ const calcDisplayBalance = function(acc) {
+  console.log(acc);
+  acc.balance = acc.movements.reduce((acc,mov) => acc + mov, 0)
+  labelBalance.textContent = `${acc.balance} EUR`
  }
 
- calcPrintBalance(account1.movements)
+ //  calcDisplayBalance(account1.movements) //let's remove this because we do not want to call these functions right in the beginning, when our script is loaded.We only want to calculate and display the balance,band the movements, and the summary when we get the data that we want to display
 
  //Maximum value of array of the movements array 
  const max = movements.reduce((acc,mov) => { //when we wanted to add all the numbers together, the purpose of the accumulator was to keep track of the current sum. And so here, the accumulator will be the one that will keep track of the current maximum value.
@@ -448,18 +449,18 @@ console.log(max);
  const totalDepositUSD = movements.filter(mov => mov > 0).map(mov => mov * euroToUsd).reduce((acc,mov)=> acc + mov,0) // we can only chain a method after another one, if the previous one returns an array
  console.log(totalDepositUSD);
  
- const calcDisplaySummary = function(movements) {
-  const incomes = movements.filter(mov => mov > 0). // we filter them for only the positive ones.
+ const calcDisplaySummary = function(acc) {//We change this from the movement to the acc because we want the interest rate
+  const incomes = acc.movements.filter(mov => mov > 0). // we filter them for only the positive ones.
   reduce((acc,mov) => acc + mov,0 )//chain another reduce because now we want to add all these positive numbers together
   labelSumIn.textContent = `${incomes}`
 
-  const out =  movements.filter(mov => mov < 0). 
+  const out =  acc.movements.filter(mov => mov < 0). 
   reduce((acc,mov) => acc + mov,0 )
   labelSumOut.textContent = `${Math.abs(out)}`
 
   //this bank pays out an interest each time that there is a deposit to the bank account. And that interest is 1.2% of the deposited amount.
-  const interest = movements.filter(mov => mov > 0).
-  map(deposit => deposit * 1.2/100).
+  const interest = acc.movements.filter(mov => mov > 0).
+  map(deposit => deposit * acc.interestRate /100).
   filter((int,i,arr) => {//So now the bank only pays an interest if that interest is at least one Euro or whatever other currency.
     console.log(arr);
     return int >= 1
@@ -470,7 +471,7 @@ console.log(max);
   //So now the bank only pays an interest if that interest is at least one Euro or whatever other currency.
  }
 
- calcDisplaySummary(account1.movements)
+ //calcDisplaySummary(account1.movements)//let's remove this because we do not want to call these functions right in the beginning, when our script is loaded.We only want to calculate and display the balance,band the movements, and the summary when we get the data that we want to display
 
 ///////////////////////////////////////////////////////////////////////////////////
 //The find Method
@@ -485,5 +486,49 @@ console.log(max);
 ///////////////////////////////////////////////////////////////////////////////////
 //Implementing Login
 
+ //Event handlers
+ let currentAccount;
+ btnLogin.addEventListener('click',function(e) {
+  e.preventDefault() //In HTML, the default behavior, when we click the submit button, is for the page to reload
+  console.log('LOGIN');
+  //Find the account from the accounts array, with the username that the user inputted
+  currentAccount = accounts.find(acc => acc.username === inputLoginUsername.value)
+  console.log(currentAccount);
+  //Check if the pin is correct 
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {//Using optional chaining to check if the current account exist
+    //Display UI and a welcome message
+    console.log('LOGIN');
+    labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]} `//Getting the first name
+  
+    //Changing the opacity when the user login
+    containerApp.style.opacity = 100
+
+
+    //Emptying the login field after we login 
+    inputLoginUsername.value = inputLoginPin.value = ''
+
+    //Remove the focus from the login field after we login 
+    inputLoginPin.blur()
+
+    //Display movements
+    displayMovements(currentAccount.movements)
+    //Display balance
+    calcDisplayBalance(currentAccount)
+    //Display summary
+    calcDisplaySummary(currentAccount)
+  }
+
+ })
+
+///////////////////////////////////////////////////////////////////////////////////
+//Implementing Transfers
  
+ btnTransfer.addEventListener('click',function(e) {
+  e.preventDefault()//because this one is also a form, and so without this, if we clicked here, then that will reload the page
+  const ammount = Number(inputTransferAmount.value)//The ammount we want to transfer
+  const receiverAcc = accounts.find(acc => acc.username === inputTransferTo.value )//The account that we are transfering to and this value will be use in the Transfer to input
+  console.log(ammount,receiverAcc);
+  //Checking the ammount if the amount here is actually a positive number otherwise we could do a negative transfer and basically transfer money to ourselves
+  //the balance of the current account needs to be greater or equal the amount that we're trying to transfer
  
+ })
