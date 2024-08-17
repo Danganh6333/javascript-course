@@ -428,4 +428,45 @@ console.log(10n / 3n); //The big int will cut the decimal part
 /////////////////////////////////////////////////
 //Creating Dates
 
+ //there are exactly four ways of creating dates in JavaScript
+ const now = new Date()
+ console.log(now);
 
+ console.log(new Date('Aug 02 2024 18:09:20'));
+ console.log(new Date('Aug 17 2024 00:23:57'));
+ console.log(new Date(account1.movementsDates[0]));
+
+ //Z here means the UTC. So that's the Coordinated Universal Time, which is basically the time without any time zone in London and also without daylight savings.
+ console.log(new Date(2037, 10, 19, 15, 23, 5));//we get November 19, 2037 at 15 hours, 23 minutes 5 second
+ //November is the month 11 so the month here is zero based
+
+ console.log(new Date(2037, 10, 31, 15, 23, 5));//November only has 30 days And so it will then autocorrect right to the next day
+
+ //Pass into the date constructor function, the amount of milliseconds passed since the beginning of the Unix time
+ console.log(new Date(0));//If we pass in zero, so zero milliseconds after that initial Unix time, then indeed we get January 1st, 1970.
+ console.log(new Date(3 * 24 * 60 * 10000));//this is how we convert from days to milliseconds, 3 days  times 24 hours, which is the number of hours in one day, times 60, which is the number of minutes in one hour, then times 60, which is the number of seconds in one minute, and then times 1000 to convert two milliseconds
+ 
+ //Working with dates
+ const future = new Date(2037, 10, 19, 15, 23)
+ console.log(future);
+ console.log(future.getFullYear());//There's also getYear, but never use that
+ console.log(future.getMonth());//Remember that this one is zero based. So 10 is actually the month number 11
+ console.log(future.getDate());
+ console.log(future.getDay());//getDay is actually not the day of the month, but the day of the week
+ console.log(future.getHours());
+ console.log(future.getMinutes());
+ console.log(future.getSeconds());
+ console.log(future.toISOString());//convert a particular date object into a string
+
+ //Get  timestamp for the date. And remember that the timestamp is the milliseconds, which have passed since January 1, 1970
+ console.log(future.getTime());
+
+ console.log(new Date(2142231780000));//create a new date only based on these milliseconds that have passed since January 1, 1970.
+ 
+ console.log(Date.now());
+
+ // set versions of all of these methods. And so yeah, there also exists set month, set date, set day and so on and so forth.
+ future.setFullYear(2024)
+ console.log(future);
+ 
+ 

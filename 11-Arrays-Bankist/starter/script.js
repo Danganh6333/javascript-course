@@ -241,12 +241,16 @@ This summary provides a high-level understanding of the Bankist app, its feature
 //Creating DOM Elements
 
  //Instead of working with global variables, start passing the data that function needs actually into that function
- const displayMovements = function(movements) {
+ const displayMovements = function(movements,sort = false) {//Adding a second parameter, which is the sort parameter and by default, we will set it to false.
 
   //The two old preset mov is still there because all we are doing is to add new elements to this container.So we need to empty the list
   containerMovements.innerHTML = '' // the difference is that textContent simply returns the text itself while HTML returns everything, including the HTML.
   //loop over these movements like deposits or withdrawls
-  movements.forEach(function(mov,i){
+  
+  //Sort in an ascending order and  if sort is false, so that's the default value, then movs should simply become movements
+  const movs = sort ? movements.slice().sort((a,b) => a - b ) : movements //All we want is to display a sorted movements array but we do not want to sort the original underlying data so we simply take a copy of the movements array and sort that
+
+  movs.forEach(function(mov,i){
 
     //Create a seperate value to know if it's a deposit or a withdrawal and also we will need that twice
     const type = mov > 0 ? 'deposit' : 'withdrawal'
@@ -258,7 +262,7 @@ This summary provides a high-level understanding of the Bankist app, its feature
           <div class="movements__value">${mov}</div>
         </div>
         `
-    //Attach this HTML into the container by using a use a method called insertAdjacentHTML
+    //Attach this HTML into the container by using a  method called insertAdjacentHTML
     //This method accepts two strings.The first string is the position in which we want to attach the HTML.The second argument is the string containing the HTML that we want to insert.
     containerMovements.insertAdjacentHTML(`afterbegin`,html)//Check the MDN for further explain
   })
@@ -488,6 +492,16 @@ console.log(max);
 
  //Event handlers
  let currentAccount;
+
+ const updateUI = function(currentAccount) {
+  //Display movements
+  displayMovements(currentAccount.movements)
+  //Display balance
+  calcDisplayBalance(currentAccount)
+  //Display summary
+  calcDisplaySummary(currentAccount)
+ }
+
  btnLogin.addEventListener('click',function(e) {
   e.preventDefault() //In HTML, the default behavior, when we click the submit button, is for the page to reload
   console.log('LOGIN');
@@ -510,12 +524,7 @@ console.log(max);
     //Remove the focus from the login field after we login 
     inputLoginPin.blur()
 
-    //Display movements
-    displayMovements(currentAccount.movements)
-    //Display balance
-    calcDisplayBalance(currentAccount)
-    //Display summary
-    calcDisplaySummary(currentAccount)
+    updateUI(currentAccount)
   }
 
  })
@@ -527,8 +536,290 @@ console.log(max);
   e.preventDefault()//because this one is also a form, and so without this, if we clicked here, then that will reload the page
   const ammount = Number(inputTransferAmount.value)//The ammount we want to transfer
   const receiverAcc = accounts.find(acc => acc.username === inputTransferTo.value )//The account that we are transfering to and this value will be use in the Transfer to input
-  console.log(ammount,receiverAcc);
+  
+   inputTransferAmount.value = inputTransferTo.value = ''  //clean out these inputs now and that we will do no matter if the transfer was successful or not
+
+
   //Checking the ammount if the amount here is actually a positive number otherwise we could do a negative transfer and basically transfer money to ourselves
   //the balance of the current account needs to be greater or equal the amount that we're trying to transfer
- 
+  if(ammount > 0 && 
+    currentAccount.balance >= ammount  && 
+    receiverAcc &&
+    receiverAcc?.username 
+    !== currentAccount.username )// data transfer can only happen if the amount is greater than zero and now the second part is that the current user needs to have enough money to do this transfer and we should not be able to transfer money to our own account and if the receiver account exist
+    {
+      // console.log('Transfer valid');
+      currentAccount.movements.push(-ammount)//From the current account
+      receiverAcc.movements.push(ammount)//The other account
+
+      //Update UI after transfer
+      updateUI(currentAccount)
+    } 
+
  })
+
+///////////////////////////////////////////////////////////////////////////////////
+//The findIndex Method
+
+ //findIndex returns the index of the found element and not the element itself
+
+ //Implement the close account function
+
+ //to delete an element from an array, we use the splice method but for the splice method, we need the index at which we want to delete
+
+ btnClose.addEventListener('click',function(e) {
+  e.preventDefault()
+  console.log('Delete');
+  if(currentAccount && currentAccount?.username === inputCloseUsername.value &&
+     currentAccount?.pin === Number(inputClosePin.value)
+   ){
+    //The big difference here is that with indexOf,nwe can only search for a value that is in the array. So, if the array contains the 23, then it's true, and if not, then it's false. But with findIndex, we can create a complex condition like the index 
+    const index = accounts.findIndex(acc => acc.username === currentAccount.username)//calculate that index at which we want to delete.
+    console.log(index); 
+    accounts.splice(index,1)
+    //After closing, we should log out the user by hiding the UI
+    containerApp.style.opacity = 0
+  }
+  inputCloseUsername.value = inputClosePin.value = '' //Clear the form
+ })
+
+///////////////////////////////////////////////////////////////////////////////////
+//some and every
+
+ //Look back at the includes method
+ console.log(movements.includes(-130));//we can use the includes method to test if an array includes a certain value
+ 
+ //some method is like includes but it can do conditon 
+ // How to know if there is any positive movement in this array. So any number above zero.
+ const anyDeposits = movements.some(mov => mov > 0)
+ console.log(anyDeposits);
+
+ btnLoan.addEventListener('click',function(e) {
+  e.preventDefault()
+  const ammount = Number(inputLoanAmount.value)
+  //the some method will become helpful for this loan feature because our bank has a rule, which says that it only grants a loan if there at least one deposit with at least 10% of the requested loan amount
+  if(ammount > 0 && currentAccount.movements.some(mov => mov >= ammount * 0.1)){//The ammount should be greater than 0
+   //Add movements
+   currentAccount.movements.push(ammount)//push the amount that was requested
+   //Update UI
+   updateUI(currentAccount)
+
+  }
+  //Clear the input field
+    inputLoanAmount.value = ''
+ })
+
+ //the difference between some and every is that every only returns true if all of the elements in the array satisfy the condition that we pass in.
+ console.log(movements.some(mov => mov > 0)); 
+ console.log(account4.movements.every(mov => mov > 0));//a account only has positive moments and it return true
+ 
+ //write function separately and then pass the function as a callback
+ const deposit = mov => mov > 0;
+ console.log(movements.some(deposit));
+ console.log(movements.filter(deposit));
+ console.log(movements.every(deposit));
+
+///////////////////////////////////////////////////////////////////////////////////
+//flat and flatMap
+
+ //what if we wanted to take all these elements in the separate and put all of these together in just one big array
+ const arr4 = [[1,2,3],[4,5,6],6,4]
+ console.log(arr4.flat());
+ //But now let's say that we have an array, which is even deeper nested
+ 
+ const arrDeeperNested = [[[1,2],3],[4,[5,6]],6,4] 
+ console.log(arrDeeperNested.flat());//now you'll see that we get this result, which still contains the two inner arrays
+ 
+ //We can fix that by using the depth agrument
+ console.log(arrDeeperNested.flat(2));
+
+ // the bank itself, wants to calculate the overall balance of all the movements of all the accounts
+ //We already store the movements in the accounts array. And so the first thing to do, is to take them out of here and put them all into one array
+ const accountMovements = accounts.map(acc => acc.movements) //Create an array which only contains the movements array
+ console.log(accountMovements);
+ 
+ const allMovements = accountMovements.flat() //Flatten the array
+ console.log(allMovements);
+
+ const overallBalance = allMovements.reduce((acc,mov)=>acc+mov,0)
+ console.log(overallBalance);
+ 
+ const overallBalanceWithChaining = accounts.map(acc => acc.movements).flat().reduce((acc,mov)=>acc+mov,0)
+ console.log(overallBalanceWithChaining);
+ 
+ // flatMap essentially combines a map and a flat method into just one method
+ //flatMap only contain 1 level deep 
+ const overallBalanceWithflatMap = accounts.flatMap(acc => acc.movements).reduce((acc,mov)=>acc+mov,0)
+ console.log(overallBalanceWithflatMap);
+
+///////////////////////////////////////////////////////////////////////////////////
+//Sorting Arrays
+
+ //String
+ const owners = ['Jonas','Zach','Adam','Martha']
+ console.log(owners.sort());//Sort alphabetically from A to Z
+ console.log(owners);//This mutate the array
+
+ //Number
+ console.log(movements);
+ //console.log(movements.sort());//the sort method does the sorting based on strings. So basically, what it does is to convert everything to strings and then it does the sorting itself
+ 
+ //Ascending
+ //we can fix this sorting number by  passing in a compare callback function into the sort method
+ movements.sort((a,b)=>{//a and b being two consecutive numbers in the array
+ //in our callback function here, if we return less than zero, then the value a will be sorted before value b. And the opposite, if we return a positive value, then a will be put before b in the sorted output array
+ //return < 0 , a,b (keep order)
+ //return > 0 ,b,a (switch order)
+  if(a>b ) return 1;
+  if(b>a) return -1;
+ })
+ //Descending
+ movements.sort((a,b)=>{
+   if(a>b) return -1;
+   if(b>a) return 1;
+  })
+ console.log(movements);
+ 
+ //We could also just do
+ movements.sort((a,b)=> a -b)
+ movements.sort((a,b)=> b-a)
+
+ //using a state variable, which will monitor if we are currently sorting the array or not
+ //that variable needs to live outside of this callback function so that its value can be preserved after clicking this button
+ let sorted = false //we start with this state variable set to false because in the beginning, our array is not sorted 
+  btnSort.addEventListener('click',function(e){
+    e.preventDefault()
+    displayMovements(currentAccount.movements,!sorted) //Change the display
+    sorted = !sorted//Fliping the value
+  })
+
+///////////////////////////////////////////////////////////////////////////////////
+//More Ways of Creating and Filling Arrays
+
+ //So far we have always simply created arrays like this
+ console.log([1,2,2,4,3,2,2,1]);
+ console.log(new Array(12,55,12,4,23,212));
+ 
+ const x = new Array(7)//it creates a new array with seven empty elements in there and it simply contains nothing
+ console.log(x);//this weird behavior of this Array() function which does it so that whenever we only pass in one argument, then it creates a new empty argument with that length
+ console.log(x.map(() => 5) );//put something there like a five.But you will see that nothing happened here
+ //So there is one method that we can call on empty array and that is the fill() method
+ //x.fill(1)//This mutate the array
+ x.fill(1,3,5)//we can also specify where we want it to start to fill. So let's say only at index three.So it will then fill it up until the end, unless we specify an end parameter like 5
+ console.log(x);
+
+ const arr8 = [1,2,2,4,3,2,2,1]
+ arr8.fill(23,1,4)
+ console.log(arr8);
+
+ //Create an array like [1,1,1,1,1,1,1] by using Array.from
+ const y = Array.from({length : 7} , () => 1)//we are using it on the Array() constructor
+ console.log(y);
+
+ //Create an array like [1,2,3,4,5,6,7]
+ const z = Array.from({length : 7},(_cur,i) => i + 1)// adding one to the index will then give us values from one to seven and we do not need the cur
+ console.log(z);
+
+ //NodeList, which is something like an array, which contains all the selected elements. But it's not a real array, and so it doesn't have methods like map(). So if we actually wanted to use a real array method like that on a NodeList, we would first need to convert the NodeList to an array.
+ //So if we wanted to actually select exactly these elements, we would have to do this code here on some event handler.
+ labelBalance.addEventListener('click',function(){//so we are selecting all of the elements that have this class but now we only get two elements here, and so that's the one that by the time we load this script here are already in the user interface
+  const movementUI = Array.from(document.querySelectorAll('.movements__value'),
+  el => Number(el.textContent.replace('€',' '))) //Putting this as an function 
+  console.log(movementUI);
+
+  //Another way of converting this here to an array
+  const movementUI2 = [...document.querySelectorAll('.movements__value')]
+
+ })
+ 
+///////////////////////////////////////////////////////////////////////////////////
+//Summary: Which Array Method to Use?
+
+ /**
+  * This video transcript provides a comprehensive summary of 23 array methods in JavaScript, categorizing them based on their use cases to help learners determine which method to use in different scenarios. Here’s a detailed summary:
+
+### **Introduction to Array Methods:**
+- The instructor highlights that 23 array methods have been studied throughout the course.
+- The key challenge is choosing the right method among these, especially for beginners who may find it confusing.
+- To simplify this, the instructor presents a framework that categorizes these methods based on specific questions related to the desired outcome.
+
+### **Categorization of Array Methods:**
+
+1. **Mutating the Original Array:**
+   - **Add Elements:** 
+     - `push`: Adds elements to the end of the array.
+     - `unshift`: Adds elements to the beginning of the array.
+   - **Remove Elements:** 
+     - `pop`: Removes the last element.
+     - `shift`: Removes the first element.
+     - `splice`: Removes elements from a specified position.
+   - **Other Mutating Methods:**
+     - `reverse`: Reverses the array.
+     - `sort`: Sorts the array.
+     - `fill`: Fills elements in an array with a static value.
+   - *Note:* Be cautious when using these methods as they alter the original array.
+
+2. **Creating a New Array:**
+   - **Transforming Arrays:**
+     - `map`: Loops over the original array and creates a new array by applying a function to each element.
+   - **Filtering Arrays:**
+     - `filter`: Creates a new array containing elements that satisfy a specific condition.
+   - **Other Methods for New Arrays:**
+     - `slice`: Creates a new array by extracting a section of the original array.
+     - `concat`: Combines two arrays into a new one.
+     - `flat`: Flattens a nested array into a new one.
+     - `flatMap`: Maps each element using a function and flattens the result into a new array.
+
+3. **Retrieving Array Index or Element:**
+   - **Getting an Index:**
+     - `indexOf`: Finds the index of a specific element.
+     - `findIndex`: Finds the index of the first element that satisfies a condition.
+   - **Getting an Element:**
+     - `find`: Retrieves the first element that satisfies a condition.
+
+4. **Checking for Inclusion:**
+   - **Check if Array Includes an Element:**
+     - `includes`: Tests if an array contains a specific value.
+   - **Condition-Based Checks:**
+     - `some`: Returns true if at least one element satisfies a condition.
+     - `every`: Returns true if all elements satisfy a condition.
+   - *Note:* These methods return Boolean values, which are useful in conditional statements like `if/else`.
+
+5. **Transforming Array to Another Type:**
+   - **Transform to String:**
+     - `join`: Converts the array into a string by joining elements with a specified separator.
+   - **Reduce to a Single Value:**
+     - `reduce`: Uses an accumulator to reduce the array to a single value, which can be of any type (number, string, Boolean, array, or object).
+     - The **snowball analogy** is used to explain how `reduce` works, where the value accumulates like a snowball rolling down a hill.
+
+6. **Looping Over Arrays:**
+   - **Without Creating a New Value:**
+     - `forEach`: Loops over the array to perform a task, but does not return a new array or any new value.
+
+### **Conclusion:**
+- The instructor concludes by encouraging learners to keep this overview handy for reference, either by printing it out or storing it on their computer.
+- The video ends by introducing a final coding challenge to apply the knowledge of these array methods.
+
+This summary serves as a quick reference guide for selecting the appropriate array method based on specific programming needs.
+  */
+ 
+///////////////////////////////////////////////////////////////////////////////////
+//Array Methods Practice
+
+ //The first exercise I wanna do here is to calculate how much has been deposited in total in the bank.
+ //the first thing that we need to do here, is to somehow get all these movements that are in these different objects, all into one big array so that we can then from there filter the deposits and then add them all together.
+ const bankDepositSum = accounts.map(acc => acc.movements).flat().filter(mov => mov > 0).reduce((sum,cur)=> sum + cur,0)//Create a new array then flatten it and then filter out the deposit and then add
+ console.log(bankDepositSum);
+
+ //count how many deposits there have been in the bank with at least $1,000
+ 
+ //The easy method
+ //  const numDeposit1000 = account.flatMap(acc => acc.movements).filter(mov => mov >= 1000).length
+ //  console.log(numDeposit1000);
+
+ //The hard method
+ const numDeposit1000 = account.flatMap(acc => acc.movements).filter(mov => mov >= 1000)
+ .reduce((count,cur) => (cur >= 1000 ? count + 1 : count)  , 0)//the callback function of the reduced method always has as a first parameter, basically the accumulator. So here that is the sum which we started at zero and then onto that sum, we keep adding the current element and then basically in each iteration we returned the entire new value. So the previous sum plus the current value.
+ console.log(numDeposit1000);
+
+ 
