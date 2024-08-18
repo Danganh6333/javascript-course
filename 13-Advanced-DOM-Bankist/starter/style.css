@@ -1,6 +1,6 @@
 /* The page is NOT responsive. You can implement responsiveness yourself if you wanna have some fun 😃 */
 
-:root {
+:root { /**these are called custom properties,but again, they are more like variables.*/
   --color-primary: #5ec576;
   --color-secondary: #ffcb03;
   --color-tertiary: #ff585f;

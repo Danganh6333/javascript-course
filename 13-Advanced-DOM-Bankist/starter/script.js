@@ -139,4 +139,17 @@ document.addEventListener('keydown', function (e) {
  console.log(getComputedStyle(message).height );
 
  //Adding the height to the banner
- message.style.height = Number.parseFloat(getComputedStyle(message).height,10) + 40 + 'px';//The getComputedStyle(message).height is a string so we need to parse it to float
+ message.style.height = Number.parseFloat(getComputedStyle(message).height,10) + 30 + 'px';//The getComputedStyle(message).height is a string so we need to parse it to float
+ //Adding the number 10 in the parseFloat as base 10
+
+ //Look at the CSS
+ document.documentElement.style.setProperty('--color-primary','orangered')//So with custom properties, we cannot do it like  message.style.backgroundColor = '' but instead we need to use setProperty and then we pass in the name of the property and the value
+
+ //Attributes
+
+ //in HTML just to remember src, alt, even the class, and the ID are simply attributes of the element 
+ const logo = document.querySelector('.nav__logo')
+ console.log(logo.alt);//Access some default properties
+ console.log(logo.src);
+ 
+ 
