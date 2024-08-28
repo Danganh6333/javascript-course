@@ -813,13 +813,47 @@ This summary serves as a quick reference guide for selecting the appropriate arr
 
  //count how many deposits there have been in the bank with at least $1,000
  
- //The easy method
+ //The first method
  //  const numDeposit1000 = account.flatMap(acc => acc.movements).filter(mov => mov >= 1000).length
  //  console.log(numDeposit1000);
 
- //The hard method
- const numDeposit1000 = account.flatMap(acc => acc.movements).filter(mov => mov >= 1000)
- .reduce((count,cur) => (cur >= 1000 ? count + 1 : count)  , 0)//the callback function of the reduced method always has as a first parameter, basically the accumulator. So here that is the sum which we started at zero and then onto that sum, we keep adding the current element and then basically in each iteration we returned the entire new value. So the previous sum plus the current value.
+ //The second method using reduce
+ const numDeposit1000 = accounts.flatMap(acc => acc.movements)
+ .filter(mov => mov >= 1000)//the callback function of the reduced method always has as a first parameter, basically the accumulator. So here that is the sum which we started at zero and then onto that sum, we keep adding the current element and then basically in each iteration we returned the entire new value. So the previous sum plus the current value.
+ .reduce((count,cur) => // the previous sum plus the current value in the bankDepositSum . So again, the sum is the accumulator, which is like the snowball onto which we keep adding our snow . But now in this case, our snowball, our accumulator will be the number of movements that are greater than a thousand.
+  (cur >= 1000 ? ++count : count)  , 0)//this initial value that is 0 right here is just like having any value outside of a loop where we keep storing a new value. And that new value might very well be a counter that we only update on a certain condition
+  //So we will say that whenever the current value is greater or equal than 1000, then we want to return the count plus one. And otherwise we just want to return the count.
  console.log(numDeposit1000);
+
+ let a = 10
+ console.log(a++);//a is actually still 10 even though we used this plus plus here.So the plus plus operator does actually increment the value but it still returns the previous value
+ console.log(a);//Now it is 11 when we log it out
+
+ console.log(++a); //But there is an easy solution because we can simply use the so-called prefixed plus plus operator.
+
+ //exercise number three
+ //create a new object instead of just a number or just a string which contains the sum of the deposits and of the withdrawals.
+ const sums = accounts.flatMap(acc => acc.movements).reduce((sums,cur)=>{
+  //cur > 0 ? sums.deposits += cur : sums.withdrawals += cur//Check if the current value is a deposit or a withdrawal. And we do that by checking if the value is greater or below zero. So if it is, then we want to add the current value to the deposits.
+  sums[cur > 0 ? 'deposits' : 'withdrawals'] += cur //Fixing the duplication of the line above
+  return sums  //So the sums does not return when  we don't have a function bodywith curly braces.  And so therefore we have to explicitly so to manually return the accumulator from the function.
+ },{deposits : 0,withdrawals:0})//the goal of this exercise is to create an object. And so our starting point  needs to be an object.
+
+ console.log(sums);
+
+//exercise number fours
+//create a simple function to convert any string to a title case. So title case basically means that all the words in a sentence are capitalized except for some of them
+// this is a nice title -> This Is a Nice Title
+const convertTitleCase = function(title){
+
+}
+console.log(convertTitleCase);
+
+ 
+
+
+ 
+ 
+ 
 
  

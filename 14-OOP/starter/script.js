@@ -704,12 +704,372 @@ const PersonProto2 = {
   constructor(owner,currency,pin){
     this.owner = owner;
     this.currency = currency;
-    this.pin = pin
-    this.movements = []
-    this.locale = navigator.language
+    this.pin = pin;
+    this.movements = [];
+    this.locale = navigator.language;
+
+    console.log(`Thanks for opening an account`);//when Jonas opens a new account, then he's basically greeted with this message here, coming right from the constructor.
+  }
+
+  //Public methods
+  deposit(val){
+    this.movements.push(val)
+  }
+
+  //we can now actually call the deposit method because it's actually gonna work basically the same way. And so, as you can see here, we can actually call other methods inside of a certain method.
+  withdrawals(val){
+    this.deposit(-val)
+  }
+
+  approveLoan(val){
+    return true
+  }
+
+  //we could make the approval of the loan based on some condition, and that condition could come from some other method
+  requestLoan(val){
+   if(this.approveLoan(val)){
+    this.deposit(val)
+    console.log('Loan approve');
+    
+   }
   }
  }
 
  const acc1 = new Account('Jonas','EUR',1111)
  console.log(acc1);
+
+ acc1.deposit(250)
+ acc1.withdrawals(129)
+ acc1.requestLoan(1000)
+
+ // it's not a good idea at all to do this. So, instead of interacting with a property like this, it's a lot better to create methods that interact with these properties.
+ //acc1.movements.push(250);
+ //acc1.movements.push(-222)
  
+///////////////////////////////////////////////////////////////////////////////////
+// Encapsulation: Protected Properties and Methods
+
+ //Encapsulation basically means to keep some properties and methods private inside the class so that they are not accessible from outside of the class
+
+ /**
+  * there are two big reasons why we need encapsulation and data privacy.
+  * So first it is to prevent code from outside of a class to accidentally manipulate or data inside the class.
+  * the second reason is that when we expose only a small interfaces so a small API consisting only of a few public methods
+  * then we can change all the other internal methods with more confidence.
+  */
+
+ class Account2 {
+  constructor(owner,currency,pin){
+    this.owner = owner;
+    this.currency = currency;
+    this._pin = pin;
+    //protected proerty
+    this._movements = [];// Add this underscore in front of the property name.This does not actually make the property truly private because this is just a convention. So it's something that developers agree to use and then everyone does it this way.
+    this.locale = navigator.language;
+
+    console.log(`Thanks for opening an account`);
+  }
+
+  //if we still wanted to give access to the movements array from the outside then we would have to implement a public method for that.
+  //Public interface
+  getMovements(){
+    return this._movements
+  }
+
+
+  deposit(val){
+    this._movements.push(val)
+  }
+
+  withdrawals(val){
+    this.deposit(-val)
+  }
+
+  _approveLoan(val){
+    return true
+  }
+
+  requestLoan(val){
+   if(this._approveLoan(val)){
+    this.deposit(val)
+    console.log('Loan approve');
+    
+   }
+  }
+ }
+
+ const acc2 = new Account2('Jonas','EUR',1111)
+ console.log(acc2);
+
+ console.log(acc2.getMovements());//this one everyone can still at least access the movements but they cannot override them. So they cannot set the movements unless of course they use the underscore with the convention but then at least they will know that it's wrong to access the property.
+ acc2.deposit(250)
+ acc2.withdrawals(129)
+ acc2.requestLoan(1000)
+
+///////////////////////////////////////////////////////////////////////////////////
+//Encapsulation: Private Class Fields and Methods
+
+ //some parts of this proposal actually already work in Google Chrome, but other parts don't.
+
+ /**
+  * in traditional OOP languages like Java and C++,
+  * properties are usually called fields.So what this means is that with this new proposal,
+  * JavaScript is moving away from the idea that classes
+  * are just syntactic sugar over constructor functions.Because with this new class features classes actually start to have abilities
+  * that we didn't previously have with constructor functions.
+  */
+
+ /**
+  * in this proposal, there are actually four different kinds of fields and methods, and actually it's even eight.
+  * But in this video, I'm just gonna focus on these four.
+  * Public fields 
+  * Private fields
+  * Public methods
+  * Private methods
+  * (there is also static version)
+  */
+
+ class Account3 {
+
+  //Public fields
+  //Adding a public fields by no declaring it using like const or let
+  //these public fields here are gonna be present on all the instances that we are creating through the class. So they are not on the prototype
+
+  locale = navigator.language
+
+  //Private fields
+  #movements = [] //this is the syntax that makes a field private in this new class proposal by using the # symbol
+  #pin;//setting the pin based on the input value to the constructor.However, we can not define a field in the constructor.So the fields, they really have to be out here outside of any method
+  constructor(owner,currency,pin){
+    this.owner = owner;
+    this.currency = currency;
+    this.#pin = pin;
+    
+    console.log(`Thanks for opening an account`);
+  }
+
+  getMovements(){
+    return this.#movements
+  }
+
+  static helper(){
+    console.log(Help);
+    
+  }
+
+  //all these methods here that we have been using are public methods
+  deposit(val){
+    this.#movements.push(val)
+  }
+
+  withdrawals(val){
+    this.deposit(-val)
+  }
+
+
+  requestLoan(val){
+   if(this._approveLoan(val)){
+    this.deposit(val)
+    console.log('Loan approve');
+    
+   }
+  }
+
+  //Private methods
+  // to make a private method, the syntax is exactly the same as private fields. So just like with the hash
+  _approveLoan(val){
+    return true
+  }
+ }
+ const acc3 = new Account3('Jonas','EUR',1111)
+ //console.log(acc3.#movements);//if we try to read account3.#movements then we get a syntax error.
+ console.log(acc3.getMovements());//this one we can still use to get the movement.
+
+///////////////////////////////////////////////////////////////////////////////////
+//Chaining Methods
+
+ //Do you remember how we chained array methods one after another, for example filter map and reduce?So we can actually implement the same ability of chaining methods in the methods of our class.
+ 
+ class Account4 {
+
+  //Public fields
+  //Adding a public fields by no declaring it using like const or let
+  //these public fields here are gonna be present on all the instances that we are creating through the class. So they are not on the prototype
+
+  locale = navigator.language
+
+  //Private fields
+  #movements = [] 
+  #pin;
+  constructor(owner,currency,pin){
+    this.owner = owner;
+    this.currency = currency;
+    this.#pin = pin;
+    
+    console.log(`Thanks for opening an account`);
+  }
+
+  getMovements(){
+    return this.#movements
+  }
+
+  static helper(){
+    console.log(Help);
+    
+  }
+
+  deposit(val){
+    this.#movements.push(val)
+    return this
+  }
+
+  withdrawals(val){
+    this.deposit(-val)
+    return this
+  }
+
+
+  requestLoan(val){
+   if(this._approveLoan(val)){
+    this.deposit(val)
+    console.log('Loan approve');
+    return this
+   }
+  }
+
+
+  _approveLoan(val){
+    return true
+  }
+ }
+ const acc4 = new Account4('Jonas','EUR',1111)
+ acc4.deposit(300).deposit(300).withdrawals(30).requestLoan(888)
+ console.log(acc4);
+ console.log(acc4.getMovements());
+ 
+ ///////////////////////////////////////////////////////////////////////////////////
+//ES6 Classes Summary
+
+ //this is how we define a class and this is  child class
+ //So student is a child class of the parent class person because of the extends keyword to set up the inheritance between these two classes
+ //the extends keyword will also automatically set up the prototype chain for us.
+ class Student3 extends Person{
+  university = 'University of Lisbon'//Public fields
+  #studyhour = 0// Private fields
+  static numSubjects = 18 //Static public fields(only available on class)
+ //this is the constructor method and it is automatically called by the new operator whenever we create a new instance of the class.So basically a new object.
+  constructor(fullName, birthYear, startYear, course) {//And this constructor method is mandatory in any regular class, but it might be omitted in a child class if we want it to have the exact same number and the exact same name of parameters.
+    super(fullName,birthYear)//the super method only necessary whenever we are writing a child class
+    //the difference between varriable and the public field is that we set these instance properties based on input data of the constructor.
+    this.startYear = startYear;
+    //this.#course = course;//created the private fields out there without any value. And then here we are simply redefining it to the value that is coming into the constructor
+  }
+
+  introduce(){
+    console.log(`I study ${this.course} at ${this.university}`);
+  }
+
+  study(h){
+    this.makeCoffe();
+    this.#studyhour += h
+  }
+
+  #makeCoffe(){
+    return `Here is a coffee for you`
+  }
+
+  // a getter method is basically so that we can get a value out of an object by simply writing a property instead of writing a method
+ //So in this case, we can simply define the test score by setting it to some value instead of calling a test score method.
+  get testScore(){
+    return this._testScore
+  }
+
+  set testScore(score){
+    this._testScore = score < 20 ? score : 0//if you have a setter for a property that is already defined in the constructor, then you need to create basically a new property with the underscore in front of it.
+  }
+ 
+  // static method is available only on the class so it cannot access the instance properties nor the methods, but only the static ones.
+  //So for example, that static public fields that we defined there in the top will of course be accessible in the static method.
+  static printCurriculum(){
+    console.log(`There are ${this.numSubjects}`);
+  }
+
+ }
+
+ const student = new Student3('Jonas',2020,2037,'Medicine')
+
+ ///////////////////////////////////////////////////////////////////////////////////
+//Coding Challenge #4
+ 
+/* 
+1. Re-create challenge #3, but this time using ES6 classes: create an 'EVCl' child class of the 'CarCl' class
+2. Make the 'charge' property private;
+3. Implement the ability to chain the 'accelerate' and 'chargeBattery' methods of this class, and also update the 'brake' method in the 'CarCl' class. They experiment with chining!
+
+DATA CAR 1: 'Rivian' going at 120 km/h, with a charge of 23%
+
+GOOD LUCK 😀
+*/
+class CarCl2 {
+  constructor(make, speed) {
+    this.make = make;
+    this.speed = speed;
+  }
+
+  accelerate() {
+    this.speed += 10;
+    console.log(`${this.make} is going at ${this.speed} km/h`);
+  }
+
+  brake() {
+    this.speed -= 5;
+    console.log(`${this.make} is going at ${this.speed} km/h`);
+    return this;
+  }
+
+  get speedUS() {
+    return this.speed / 1.6;
+  }
+
+  set speedUS(speed) {
+    this.speed = speed * 1.6;
+  }
+}
+
+class EVCl extends CarCl2 {
+  #charge;
+
+  constructor(make, speed, charge) {
+    super(make, speed);
+    this.#charge = charge;
+  }
+
+  chargeBattery(chargeTo) {
+    this.#charge = chargeTo;
+    return this;
+  }
+
+  accelerate() {
+    this.speed += 20;
+    this.#charge--;
+    console.log(
+      `${this.make} is going at ${this.speed} km/h, with a charge of ${
+        this.#charge
+      }`
+    );
+    return this;
+  }
+}
+
+const rivian = new EVCl('Rivian', 120, 23);
+console.log(rivian);
+// console.log(rivian.#charge);
+rivian
+  .accelerate()
+  .accelerate()
+  .accelerate()
+  .brake()
+  .chargeBattery(50)
+  .accelerate();
+
+console.log(rivian.speedUS);

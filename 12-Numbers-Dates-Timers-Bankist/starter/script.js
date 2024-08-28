@@ -94,7 +94,7 @@ const displayMovements = function (movements, sort = false) {
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-        <div class="movements__value">${mov}€</div>
+        <div class="movements__value">${mov.toFixed(2)}€</div>
       </div>
     `;
 
@@ -104,7 +104,7 @@ const displayMovements = function (movements, sort = false) {
 
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${acc.balance}€`;
+  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
 };
 
 const calcDisplaySummary = function (acc) {
@@ -116,7 +116,7 @@ const calcDisplaySummary = function (acc) {
   const out = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(out)}€`;
+  labelSumOut.textContent = `${Math.abs(out).toFixed(2)}€`;
 
   const interest = acc.movements
     .filter(mov => mov > 0)
@@ -126,7 +126,7 @@ const calcDisplaySummary = function (acc) {
       return int >= 1;
     })
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest}€`;
+  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
 };
 
 const createUsernames = function (accs) {
@@ -154,6 +154,12 @@ const updateUI = function (acc) {
 ///////////////////////////////////////
 // Event handlers
 let currentAccount;
+
+//Fake as if we always log in 
+currentAccount = account1
+updateUI(currentAccount)
+containerApp.style.opacity = 100
+
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
@@ -206,7 +212,7 @@ btnTransfer.addEventListener('click', function (e) {
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
 
-  const amount = Math.floor(inputLoanAmount.value);
+  const amount = Math.floor(inputLoanAmount.value);//We use the floor because we want to covert this in a number and we simply want to round any value down
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
@@ -343,10 +349,10 @@ btnSort.addEventListener('click', function (e) {
  console.log((2.3444).toFixed(3));//Rerurn 2.344
 
  //Convert toFixed to number
- console.log(+(2.7).toFixed(0))
+ console.log(+(2.7).toFixed(0))//The number is a primitives and it's actually don't have methods. And so behind the scenes, JavaScript will do boxing and transform this to a number object, then call the method on that object. And then once the operation is finished it will convert it back to a primitive
  
-
- //A number is a primitive. And primitives actually don't have methods. And so behind the scenes, JavaScript will do boxing. And boxing is to basically transform this to a number object, then call the method on that object. And then once the operation is finished it will convert it back to a primitive 
+ //Rounding the requested loan 
+ //Look at the btnLoan above
 
 /////////////////////////////////////////////////
 //The Remainder Operator
@@ -362,6 +368,19 @@ btnSort.addEventListener('click', function (e) {
  const isEven = n => n % 2 === 0
  console.log(isEven(8));
  console.log(isEven(80890));
+
+ labelBalance.addEventListener('click',function() {
+  [...document.querySelectorAll('.movements__row')]//select all of this elements to return a nodeList and covert it to a real array by the use of the spread operator and then on that array, we can immediately call forEach
+ .forEach(function(row,i){
+  //color every second row of the movements.
+  if(i % 2 === 0){//check if the code index is divisible by two.
+    row.style.backgroundColor = 'red'
+  }
+  //Paint every third row
+  if(i % 3 === 0)   row.style.backgroundColor = 'blue'
+  })
+ })
+ 
 
 /////////////////////////////////////////////////
 //Numeric Separators
@@ -429,11 +448,11 @@ console.log(10n / 3n); //The big int will cut the decimal part
 //Creating Dates
 
  //there are exactly four ways of creating dates in JavaScript
- const now = new Date()
+ const now = new Date()//we get the current date and time at this very moment
  console.log(now);
 
  console.log(new Date('Aug 02 2024 18:09:20'));
- console.log(new Date('Aug 17 2024 00:23:57'));
+ console.log(new Date('Aug 17, 2024'));
  console.log(new Date(account1.movementsDates[0]));
 
  //Z here means the UTC. So that's the Coordinated Universal Time, which is basically the time without any time zone in London and also without daylight savings.
@@ -468,5 +487,8 @@ console.log(10n / 3n); //The big int will cut the decimal part
  // set versions of all of these methods. And so yeah, there also exists set month, set date, set day and so on and so forth.
  future.setFullYear(2024)
  console.log(future);
+
+/////////////////////////////////////////////////
+//Adding Dates to "Bankist" App
  
  

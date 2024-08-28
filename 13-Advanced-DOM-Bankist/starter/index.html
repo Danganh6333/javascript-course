@@ -16,15 +16,20 @@
   <body>
     <header class="header">
       <nav class="nav">
+        <!--TODO Adding the data attribute -->
+        <!-- it has to start with data and then dash, and then whatever we want. -->
         <img
           src="img/logo.png"
           alt="Bankist logo"
           class="nav__logo"
           id="logo"
+          designer = 'Jonas'
+          data-version-number = "3.0"
         />
         <ul class="nav__links">
           <li class="nav__item">
-            <a class="nav__link" href="#section--1">Features</a>
+            <!-- You need to remove the section--1 from the anchors for the code in Event Propagation in Practice -->
+             <a class="nav__link" href="#section--1">Features</a> <!-- Adding a # so it does not reload the page -->
           </li>
           <li class="nav__item">
             <a class="nav__link" href="#section--2">Operations</a>
@@ -41,6 +46,8 @@
       </nav>
 
       <div class="header__title">
+        <!--NOTE a third way of handling events -->
+        <!-- <h1 onclick="alert('HTML alert')"> -->
         <h1>
           When
           <!-- Green highlight effect -->
