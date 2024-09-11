@@ -842,12 +842,22 @@ This summary serves as a quick reference guide for selecting the appropriate arr
  console.log(sums);
 
 //exercise number fours
-//create a simple function to convert any string to a title case. So title case basically means that all the words in a sentence are capitalized except for some of them
+//create a simple function to convert any string to a title case. So title case means that all the words in a sentence are capitalized except for some of them
 // this is a nice title -> This Is a Nice Title
 const convertTitleCase = function(title){
+  const capitalize = str => str[0].toUppercase() + str.slice(1)//Fixing first word of the title is not capitalized
 
-}
-console.log(convertTitleCase);
+  //creating an array which contains the exceptions
+  const exceptions  = ['a','an','the',and,'but','or','on','in','with']//So the words that should not be capitalized and the exceptions are in the array
+  const titleCase = title.toLowerCase()
+  .split(' ')//split this string into an array so that these words, which are separated by spaces, each of them are going to be one of the elements of the array.
+  .map( word => exceptions.includes(word) ?  word : //if the word is indeed included in the exceptions, then we want to simply return that word. And only otherwise we want to then return the capitalized version
+    word[0].toUppercase + word.slice(1))//the rest of the string is taking everything starting at position number one
+  .join(' ')
+    return capitalize(titleCase)
+} 
+console.log(convertTitleCase('this is a nice title'));
+console.log(convertTitleCase('this is a LONG title but not to long'));
 
  
 

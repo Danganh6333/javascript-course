@@ -8,6 +8,9 @@ const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
 const header = document.querySelector('.header');
+const tabs = document.querySelectorAll('.operations__tab')
+ const tabsContainer = document.querySelector('.operations__tab-container')
+ const tabsContent = document.querySelectorAll('.operations__content')
 
 const openModal = function () {
   modal.classList.remove('hidden');
@@ -459,9 +462,9 @@ In summary, the phrase **"the same event"** highlights that despite multiple eve
 
  //In the three tabs, first one  has the operations content active class. And so therefore this one is visible and all the others are hidden.
 
- const tabs = document.querySelectorAll('.operations__tab')
- const tabsContainer = document.querySelector('.operations__tab-container')
- const tabsContent = document.querySelectorAll('.operations__content')//tabsContent is document.querySelectorAll because we have three of them
+//  const tabs = document.querySelectorAll('.operations__tab')
+//  const tabsContainer = document.querySelector('.operations__tab-container')
+//  const tabsContent = document.querySelectorAll('.operations__content')//tabsContent is document.querySelectorAll because we have three of them
 
  //Adding button
  

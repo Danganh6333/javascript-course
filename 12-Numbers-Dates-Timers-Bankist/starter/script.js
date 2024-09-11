@@ -16,14 +16,14 @@ const account1 = {
   pin: 1111,
 
   movementsDates: [
-    '2019-11-18T21:31:17.178Z',
-    '2019-12-23T07:42:02.383Z',
-    '2020-01-28T09:15:04.904Z',
-    '2020-04-01T10:17:24.185Z',
-    '2020-05-08T14:11:59.604Z',
-    '2020-05-27T17:01:17.194Z',
-    '2020-07-11T23:36:17.929Z',
-    '2020-07-12T10:51:36.790Z',
+    '2024-08-18T21:31:17.178Z',
+    '2024-08-23T07:42:02.383Z',
+    '2024-08-28T09:15:04.904Z',
+    '2024-08-29T10:17:24.185Z',
+    '2024-08-08T14:11:59.604Z',
+    '2024-08-27T17:01:17.194Z',
+    '2024-08-11T23:36:17.929Z',
+    '2024-08-12T10:51:36.790Z',
   ],
   currency: 'EUR',
   locale: 'pt-PT', // de-DE
@@ -36,14 +36,14 @@ const account2 = {
   pin: 2222,
 
   movementsDates: [
-    '2019-11-01T13:15:33.035Z',
-    '2019-11-30T09:48:16.867Z',
-    '2019-12-25T06:04:23.907Z',
-    '2020-01-25T14:18:46.235Z',
-    '2020-02-05T16:33:06.386Z',
-    '2020-04-10T14:43:26.374Z',
-    '2020-06-25T18:49:59.371Z',
-    '2020-07-26T12:01:20.894Z',
+    '2024-11-01T13:15:33.035Z',
+    '2024-11-30T09:48:16.867Z',
+    '2024-12-25T06:04:23.907Z',
+    '2024-01-25T14:18:46.235Z',
+    '2024-02-05T16:33:06.386Z',
+    '2024-04-10T14:43:26.374Z',
+    '2024-06-25T18:49:59.371Z',
+    '2024-07-26T12:01:20.894Z',
   ],
   currency: 'USD',
   locale: 'en-US',
@@ -81,19 +81,55 @@ const inputClosePin = document.querySelector('.form__input--pin');
 /////////////////////////////////////////////////
 // Functions
 
-const displayMovements = function (movements, sort = false) {
+//Using the displayMovement to show if one movement happened today, then here instead of the current date, I want to display today, then if it happened yesterday, I want to write yesterday.And then if it happened, like a couple of days ago, then I want this to say, like two or three days ago
+const formatMovement = function(date){
+    const calcDayPassed = (date1,date2) =>Math.round(Math.abs((date2 - date1)/(1000 * 60 * 60 * 24)) ) 
+
+    const dayPassed = calcDayPassed(new Date(),date)//So between right now, there is a new date. And then the second date is the date that we just received her
+    console.log(dayPassed);
+    
+    if(dayPassed === 0 ) return 'Today'; //if we do something today, then actually the string that we want to print is not the current date, but instead today
+    if(dayPassed === 1) return 'Yesterday'; //if one day has passed,we want to return yesterday
+    if(dayPassed <= 7)   return `${dayPassed} days ago`; // if the number of days past is within the last week. So that's less or equal seven, and then we will return the number of days.
+
+    const day = `${date.getDate()}`.padStart(0,2)
+    const month =`${date.getMonth() + 1}`.padStart(0,2) 
+    const year = date.getFullYear()
+    return `${day}/${month}/${year}`
+  }
+
+const displayMovements = function (acc, sort = false) {
+  
   containerMovements.innerHTML = '';
 
-  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
-
+  const movs = sort ? acc.movements.slice().sort((a, b) => a - b) : acc.movements;
+  //display the date as day/month/year
+  //display the times of these movements
+  //the date is in the the accounts.movementDates. And so here, we are looping over the movements. And so at the same time, basically we also need to loop over the movement dates
+  
   movs.forEach(function (mov, i) {
-    const type = mov > 0 ? 'deposit' : 'withdrawal';
 
+
+    const type = mov > 0 ? 'deposit' : 'withdrawal';
+    
+     //This is a common technique of looping over two arrays at the same time. So we called it for each method on one of them. And then we use the current index to also get the data from some other array
+     //  const date = new Date(acc.movementsDates[i])//The i is the current index in the movements array. And the same index is then gonna point to the equivalent date in movements date array
+   
+     //  const day = `${date.getDate()}`.padStart(0,2)
+     //  const month =`${date.getMonth() + 1}`.padStart(0,2) 
+     //  const year = date.getFullYear()
+     //  const displayDate  = `${day}/${month}/${year}`
+
+     const date = new Date(acc.movementsDates[i])
+     const displayDate = formatMovement(date)
+    console.log(displayDate);
+    
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
+        <div class="movements__date">${displayDate}</div>
         <div class="movements__value">${mov.toFixed(2)}€</div>
       </div>
     `;
@@ -142,7 +178,7 @@ createUsernames(accounts);
 
 const updateUI = function (acc) {
   // Display movements
-  displayMovements(acc.movements);
+  displayMovements(acc);
 
   // Display balance
   calcDisplayBalance(acc);
@@ -177,6 +213,16 @@ btnLogin.addEventListener('click', function (e) {
     }`;
     containerApp.style.opacity = 100;
 
+    //Create the current date
+    //whenever the month and the year is only one digit , we pad the number here with a zero on the left
+    const nows = new Date()
+    const day = `${nows.getDate()}`.padStart(0,2)//we want this always to be two characters long  pad it with a zero
+    const month =`${nows.getMonth() + 1}`.padStart(0,2)  //Month is zero based
+    const year = nows.getFullYear()
+    const hour = nows.getHours()
+    const min = nows.getMinutes()
+    labelDate.textContent = `${day}/${month}/${year} , ${hour}:${min}`
+
     // Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
@@ -204,6 +250,11 @@ btnTransfer.addEventListener('click', function (e) {
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
 
+    //whenever there is a new transfer or a new loan, we need to not only push the new value into the movements array, but also into the movement dates
+    //Add the transfer date
+    currentAccount.movementsDates.push(new Date().toISOString())
+    receiverAcc.movementsDates.push(new Date().toISOString())
+
     // Update UI
     updateUI(currentAccount);
   }
@@ -217,6 +268,9 @@ btnLoan.addEventListener('click', function (e) {
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
     currentAccount.movements.push(amount);
+
+     //Add the loan date
+     currentAccount.movementsDates.push(new Date().toISOString())//Without the toISOString() it will return an object
 
     // Update UI
     updateUI(currentAccount);
@@ -430,7 +484,7 @@ btnSort.addEventListener('click', function (e) {
  //console.log(Math.sqrt(12n));//This does not work
  
 
-//what is not possible is to mix BigInt with regular numbers
+//It is not possible to mix BigInt with regular numbers
 const huge = 3123904903492394092349234n
 const numb = 23
 // console.log(huge * numb); This will not work 
@@ -438,7 +492,7 @@ console.log(huge * BigInt(numb));
 
 //Exception
 console.log(20n > 15);
-console.log(20n === 20);//These two value have two primitive type so false
+console.log(20n === 20);//These two value have two different primitive type so false
 console.log(typeof 20n);
 console.log(20n == 20);//This is true
 
@@ -491,4 +545,33 @@ console.log(10n / 3n); //The big int will cut the decimal part
 /////////////////////////////////////////////////
 //Adding Dates to "Bankist" App
  
+ //Look above for Fake as if we always log in
+ //Look at the displayMovements function
+
+/////////////////////////////////////////////////
+//Operations With Dates
+const future2 = new Date(2037, 10, 19, 15, 23)
+
+//Convert Date to number
+console.log(Number(future2));
+console.log(+future2);//Using the plus operator
+
+ //create a function that takes in two dates. And it's going to return the number of days that pass between these two dates.
+ //We need to add the Math.abs incase for negative number 
+ const calcDayPassed = (date1,date2) =>Math.abs((date2 - date1)/(1000 * 60 * 60 * 24))  //This will return to us in milliseconds so we  want to divide by 1000. And so this converts milliseconds to seconds, then that times 60, to convert it to minutes, then times 60 to convert it to hours, and then times 24, which converts it to days.
+
+
+const day1 = calcDayPassed(new Date(2037, 10, 19),new Date(2037, 10, 28))
+console.log(day1);
+
+//Using the displayMovement to show if one movement happened today, then here instead of the current date, display today, then if it happened yesterday, write yesterday.And then if it happened, like a couple of days ago, then  say like two or three days ago
+
+/////////////////////////////////////////////////
+//Timers: setTimeout and setInterval
+
+ //the set timeout timer runs just once, after a defined time, while the set interval timer keeps running basically forever, until we stop it.
+ setTimeout(() => {
+  console.log('Here is your pizza');
+ }, 3000);
+
  
